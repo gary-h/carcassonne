@@ -1,0 +1,87 @@
+from fastapi.testclient import TestClient
+
+from backend.main import app
+from backend.engine.models import GameState, MeeplePlacement, PlacedTile, PlayerState
+from backend.storage.game_store import game_store
+
+
+def main() -> None:
+    client = TestClient(app)
+
+    create = client.post("/games/create", json={})
+    create.raise_for_status()
+    game_id = create.json()["game_id"]
+    print("Created game:", game_id)
+
+    join_a = client.post(f"/games/{game_id}/join", json={"name": "Alice"})
+    join_a.raise_for_status()
+    player_a = join_a.json()["player_id"]
+
+    join_b = client.post(f"/games/{game_id}/join", json={"name": "Bob"})
+    join_b.raise_for_status()
+    player_b = join_b.json()["player_id"]
+    print("Players:", player_a, player_b)
+
+    state = client.get(f"/games/{game_id}", params={"player_id": player_a}).json()
+    for turn in range(8):
+        if state["status"] != "active":
+            break
+        move = state["current_turn"]["legal_moves"][0]
+        response = client.post(
+            f"/moves/{game_id}/submit",
+            json={
+                "player_id": state["current_player_id"],
+                "x": move["x"],
+                "y": move["y"],
+                "rotation": move["rotation"],
+                "feature_id": None,
+            },
+        )
+        response.raise_for_status()
+        state = response.json()["game"]
+        print(f"Turn {turn + 1}: {state['messages'][-1]}")
+
+    print("Scores:", [(player["name"], player["score"]) for player in state["players"]])
+
+    # Regression check: the engine must not allow a road edge to touch the start tile's city edge.
+    regression_game = game_store.engine.create_game(seed=1)
+    game_store.engine.add_player(regression_game, "A")
+    game_store.engine.add_player(regression_game, "B")
+    assert regression_game.current_turn is not None
+    if regression_game.current_turn.tile_id == "curve":
+        illegal = [
+            move
+            for move in regression_game.current_turn.legal_moves
+            if (move["x"], move["y"]) == (0, -1)
+        ]
+        assert not illegal, "Illegal city-road match exposed above the start tile."
+
+    # Endgame farm scoring: one farmer adjacent to one completed city should score 3.
+    farm_game = GameState(game_id="farm-check")
+    farm_game.players.extend(
+        [
+            PlayerState(id="farmer", name="Farmer", color="red"),
+            PlayerState(id="other", name="Other", color="blue"),
+        ]
+    )
+    farm_game.status = "finished"
+    base_field_id = next(
+        feature["id"]
+        for feature in game_store.engine.tile_summary("city_cap")["features"]
+        if feature["kind"] == "field"
+    )
+    farm_game.board[(0, 0)] = PlacedTile(
+        tile_id="city_cap",
+        rotation=0,
+        x=0,
+        y=0,
+        meeple=MeeplePlacement(player_id="farmer", feature_id=base_field_id, kind="field"),
+    )
+    farm_game.players[0].meeples_available -= 1
+    farm_game.board[(0, -1)] = PlacedTile(tile_id="city_cap", rotation=2, x=0, y=-1)
+    game_store.engine._finalize_game(farm_game)
+    assert farm_game.players[0].score == 3, "Farm scoring should award 3 points per completed adjacent city."
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Carcassonne</title>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="panel">
+          <p class="eyebrow">Carcassonne</p>
+          <h1>Remote two-player base game</h1>
+          <p class="muted">
+            FastAPI-hosted play for two humans now, with a stable move API for AI later.
+          </p>
+        </div>
+
+        <div class="panel" id="auth-panel">
+          <h2>Play</h2>
+          <label class="field">
+            <span>Name</span>
+            <input id="player-name" maxlength="24" placeholder="Player name">
+          </label>
+          <div class="actions">
+            <button id="create-game">Create game</button>
+          </div>
+          <div class="divider">or</div>
+          <label class="field">
+            <span>Game ID</span>
+            <input id="join-game-id" maxlength="12" placeholder="Enter game id">
+          </label>
+          <div class="actions">
+            <button class="secondary" id="join-game">Join game</button>
+          </div>
+          <p class="hint">Share the game ID or URL through ngrok so the second player can join.</p>
+        </div>
+
+        <div class="panel hidden" id="game-panel">
+          <div class="game-header">
+            <div>
+              <p class="eyebrow">Game</p>
+              <h2 id="game-id-label">-</h2>
+            </div>
+            <button class="secondary" id="copy-link">Copy link</button>
+          </div>
+          <p class="hint" id="turn-banner">Waiting for state...</p>
+          <div class="player-list" id="player-list"></div>
+          <div class="stats">
+            <div><span>Deck</span><strong id="remaining-tiles">-</strong></div>
+            <div><span>Discarded</span><strong id="discarded-tiles">-</strong></div>
+          </div>
+        </div>
+
+        <div class="panel hidden" id="turn-panel">
+          <h2>Current tile</h2>
+          <div class="current-tile-card">
+            <div class="tile-preview">
+              <img id="current-tile-image" alt="Current tile">
+            </div>
+            <div>
+              <strong id="current-tile-name">-</strong>
+              <p class="muted" id="current-tile-edges">-</p>
+            </div>
+          </div>
+
+          <div class="rotation-group">
+            <span>Rotation</span>
+            <div class="actions">
+              <button class="secondary" id="rotate-left">-90</button>
+              <button class="secondary" id="rotate-right">+90</button>
+            </div>
+          </div>
+
+          <div class="selection-box" id="selection-box">
+            <p class="muted">Click a highlighted board cell to select a legal placement.</p>
+          </div>
+
+          <label class="field">
+            <span>Meeple</span>
+            <select id="meeple-select"></select>
+          </label>
+          <div class="actions">
+            <button id="submit-move">Place tile</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Log</h2>
+          <div class="log" id="message-log"></div>
+        </div>
+      </aside>
+
+      <main class="board-area">
+        <div class="board-toolbar">
+          <p id="status-line">No game loaded.</p>
+        </div>
+        <div class="board-wrap">
+          <div class="board" id="board"></div>
+        </div>
+      </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

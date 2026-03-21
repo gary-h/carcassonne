@@ -1,0 +1,18 @@
+assets taken from https://github.com/Koki-Yamaguchi/carcassonne-simulator/tree/main
+
+Run locally:
+
+```bash
+uvicorn backend.main:app --reload
+```
+
+Open `http://127.0.0.1:8000`, create a game, and share the URL or game ID with a second player. If you want to expose it publicly, run ngrok against the same port.
+
+API flow:
+
+- `POST /games/create`
+- `POST /games/{game_id}/join`
+- `GET /games/{game_id}?player_id=...`
+- `POST /moves/{game_id}/submit`
+
+The browser client and any future AI agent use the same state and move contract. `GET /games/{game_id}` includes the current tile and all legal moves for the active turn.
