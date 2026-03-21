@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 
 from backend.main import app
 from backend.engine.models import GameState, MeeplePlacement, PlacedTile, PlayerState
+from backend.engine.tile_library import START_TILE_ID, VOID_TILE_ID
 from backend.storage.game_store import game_store
 
 
@@ -100,6 +101,23 @@ def main() -> None:
     farm_game.board[(0, -1)] = PlacedTile(tile_id="city_cap", rotation=2, x=0, y=-1)
     game_store.engine._finalize_game(farm_game)
     assert farm_game.players[0].score == 3, "Farm scoring should award 3 points per completed adjacent city."
+
+    # Void card variant: adds ten void tiles and blocks adjacent placements permanently.
+    regular_deck_game = game_store.engine.create_game(seed=7, use_void_cards=False)
+    void_deck_game = game_store.engine.create_game(seed=7, use_void_cards=True)
+    assert len(void_deck_game.deck) == len(regular_deck_game.deck) + 10
+    assert void_deck_game.use_void_cards is True
+    assert sum(1 for tile_id in void_deck_game.deck if tile_id == VOID_TILE_ID) == 10
+
+    blocked_game = GameState(game_id="void-check", use_void_cards=True)
+    blocked_game.board[(0, 0)] = PlacedTile(tile_id=START_TILE_ID, rotation=0, x=0, y=0)
+    blocked_game.board[(2, 0)] = PlacedTile(tile_id=VOID_TILE_ID, rotation=0, x=2, y=0)
+    blocked_positions = game_store.engine._blocked_positions(blocked_game)
+    assert (1, 0) in blocked_positions
+    assert (2, -1) in blocked_positions
+    assert (3, 0) in blocked_positions
+    assert (2, 1) in blocked_positions
+    assert (1, 0) not in game_store.engine._candidate_positions(blocked_game), "No tile may be placed adjacent to a void card."
 
     # Bot path: creating a mixed game with bots should allow humans to join and bots to respond.
     bot_create = client.post("/games/create", json={"bot_counts": {"easy": 1, "medium": 1, "hard": 1}})

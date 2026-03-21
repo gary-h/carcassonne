@@ -16,6 +16,7 @@ const elements = {
   gamePanel: document.getElementById("game-panel"),
   turnPanel: document.getElementById("turn-panel"),
   playerName: document.getElementById("player-name"),
+  useVoidCards: document.getElementById("use-void-cards"),
   insertBot: document.getElementById("insert-bot"),
   botConfigList: document.getElementById("bot-config-list"),
   createGame: document.getElementById("create-game"),
@@ -118,6 +119,7 @@ async function createGame() {
     body: JSON.stringify({
       bot_counts: botCounts,
       bot_only: botOnly,
+      use_void_cards: elements.useVoidCards.checked,
     }),
   });
   state.gameId = response.game_id;
@@ -404,14 +406,14 @@ function rotate(delta) {
 
 function describeStatus(game) {
   if (game.status === "waiting") {
-    return `Lobby ${game.game_id}: ${game.players.length}/${game.max_players} players joined.`;
+    return `Lobby ${game.game_id}: ${game.players.length}/${game.max_players} players joined.${game.use_void_cards ? " Void cards on." : ""}`;
   }
   if (game.status === "finished") {
     const names = game.players.filter((player) => game.winner_ids.includes(player.id)).map((player) => player.name);
     return `Game over. Winner${names.length > 1 ? "s" : ""}: ${names.join(", ") || "n/a"}.`;
   }
   const current = game.players.find((player) => player.id === game.current_player_id);
-  return current ? `${current.name}${current.is_bot ? " (bot)" : ""} to play.` : "Game in progress.";
+  return current ? `${current.name}${current.is_bot ? " (bot)" : ""} to play.${game.use_void_cards ? " Void cards on." : ""}` : "Game in progress.";
 }
 
 function formatBotPolicy(policy) {

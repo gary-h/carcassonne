@@ -4,6 +4,7 @@ from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Tuple
+from urllib.parse import quote
 
 from PIL import Image
 
@@ -60,6 +61,16 @@ class TileDefinition:
     edges: Dict[str, str]
     features: Tuple[FeatureDefinition, ...]
     count: int = 3
+
+
+VOID_TILE_ID = "void"
+VOID_TILE_COUNT = 10
+VOID_TILE_IMAGE = "data:image/svg+xml;utf8," + quote(
+    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>"
+    "<rect width='100' height='100' rx='8' fill='#080808'/>"
+    "<rect x='8' y='8' width='84' height='84' rx='6' fill='#111111' stroke='#333333' stroke-width='2'/>"
+    "</svg>"
+)
 
 
 def rotate_direction(direction: str, turns: int) -> str:
@@ -352,3 +363,12 @@ for tile_id, features in FEATURE_OVERRIDES.items():
 
 
 START_TILE_ID = "city_cap_straight"
+
+TILE_LIBRARY[VOID_TILE_ID] = TileDefinition(
+    id=VOID_TILE_ID,
+    name="Void Card",
+    image_name=VOID_TILE_IMAGE,
+    edges={direction: "void" for direction in DIRECTIONS},
+    features=(),
+    count=VOID_TILE_COUNT,
+)

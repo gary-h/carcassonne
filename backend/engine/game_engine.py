@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Set, Tuple
 from uuid import uuid4
 
 from backend.engine.models import CurrentTurn, GameState, MeeplePlacement, PlacedTile, PlayerState
-from backend.engine.tile_library import OPPOSITE_DIRECTION, OPPOSITE_PORT, START_TILE_ID, STEP_BY_DIRECTION, STEP_BY_PORT, TILE_LIBRARY, rotated_features, rotate_edges
+from backend.engine.tile_library import OPPOSITE_DIRECTION, OPPOSITE_PORT, START_TILE_ID, STEP_BY_DIRECTION, STEP_BY_PORT, TILE_LIBRARY, VOID_TILE_ID, rotated_features, rotate_edges
 
 
 PLAYER_COLORS = ["red", "blue", "green", "yellow", "black"]
@@ -19,18 +19,22 @@ class InvalidMoveError(ValueError):
 
 
 class GameEngine:
-    def create_game(self, seed: Optional[int] = None) -> GameState:
+    def create_game(self, seed: Optional[int] = None, use_void_cards: bool = False) -> GameState:
         game_id = uuid4().hex[:8]
         rng = random.Random(seed if seed is not None else game_id)
         deck: List[str] = []
         for tile_id, tile in TILE_LIBRARY.items():
             if tile_id == START_TILE_ID:
                 continue
+            if tile_id == VOID_TILE_ID and not use_void_cards:
+                continue
             deck.extend([tile_id] * tile.count)
         rng.shuffle(deck)
-        game = GameState(game_id=game_id, deck=deck, max_players=MAX_PLAYERS)
+        game = GameState(game_id=game_id, deck=deck, max_players=MAX_PLAYERS, use_void_cards=use_void_cards)
         game.board[(0, 0)] = PlacedTile(tile_id=START_TILE_ID, rotation=0, x=0, y=0)
         game.message_log.append("Game created. Share the game ID with other players, then start when ready.")
+        if use_void_cards:
+            game.message_log.append("Void cards variant enabled.")
         return game
 
     def add_player(self, game: GameState, name: Optional[str] = None, is_bot: bool = False, bot_policy: Optional[str] = None) -> PlayerState:
@@ -134,6 +138,7 @@ class GameEngine:
             "host_player_id": game.host_player_id,
             "max_players": game.max_players,
             "min_players_to_start": MIN_PLAYERS,
+            "use_void_cards": game.use_void_cards,
             "players": [
                 {
                     "id": player.id,
@@ -171,7 +176,11 @@ class GameEngine:
             "winner_ids": game.winner_ids,
             "messages": game.message_log[-12:],
             "viewport": viewport,
-            "catalog": [self.tile_summary(tile_id) for tile_id in TILE_LIBRARY.keys()],
+            "catalog": [
+                self.tile_summary(tile_id)
+                for tile_id in TILE_LIBRARY.keys()
+                if game.use_void_cards or tile_id != VOID_TILE_ID
+            ],
         }
 
     def tile_summary(self, tile_id: str) -> dict:
@@ -179,7 +188,7 @@ class GameEngine:
         return {
             "id": tile.id,
             "name": tile.name,
-            "image_path": f"/assets/img/tiles/{tile.image_name}",
+            "image_path": tile.image_name if tile.image_name.startswith("data:") else f"/assets/img/tiles/{tile.image_name}",
             "edges": tile.edges,
             "features": [
                 {
@@ -213,6 +222,8 @@ class GameEngine:
         self._prepare_turn(game)
 
     def _legal_moves(self, game: GameState, tile_id: str) -> List[dict]:
+        if tile_id == VOID_TILE_ID:
+            return self._legal_void_moves(game)
         positions = self._candidate_positions(game)
         legal_moves: List[dict] = []
         tile = TILE_LIBRARY[tile_id]
@@ -234,12 +245,56 @@ class GameEngine:
 
     def _candidate_positions(self, game: GameState) -> Set[Tuple[int, int]]:
         positions: Set[Tuple[int, int]] = set()
+        blocked = self._blocked_positions(game)
         for x, y in game.board.keys():
+            if game.board[(x, y)].tile_id == VOID_TILE_ID:
+                continue
             for dx, dy in STEP_BY_DIRECTION.values():
                 target = (x + dx, y + dy)
-                if target not in game.board:
+                if target not in game.board and target not in blocked:
                     positions.add(target)
         return positions
+
+    def _legal_void_moves(self, game: GameState) -> List[dict]:
+        legal_moves: List[dict] = []
+        for x, y in sorted(self._void_candidate_positions(game)):
+            legal_moves.append(
+                {
+                    "x": x,
+                    "y": y,
+                    "rotation": 0,
+                    "meeple_options": [{"feature_id": None, "kind": None, "label": "No meeple"}],
+                }
+            )
+        return legal_moves
+
+    def _void_candidate_positions(self, game: GameState) -> Set[Tuple[int, int]]:
+        occupied_x = [x for x, _ in game.board.keys()]
+        occupied_y = [y for _, y in game.board.keys()]
+        padding = 4
+        positions: Set[Tuple[int, int]] = set()
+        for x in range(min(occupied_x) - padding, max(occupied_x) + padding + 1):
+            for y in range(min(occupied_y) - padding, max(occupied_y) + padding + 1):
+                if (x, y) in game.board:
+                    continue
+                if self._has_adjacent_tile(game, x, y):
+                    continue
+                positions.add((x, y))
+        return positions
+
+    def _blocked_positions(self, game: GameState) -> Set[Tuple[int, int]]:
+        blocked: Set[Tuple[int, int]] = set()
+        for (x, y), tile in game.board.items():
+            if tile.tile_id != VOID_TILE_ID:
+                continue
+            for dx, dy in STEP_BY_DIRECTION.values():
+                position = (x + dx, y + dy)
+                if position not in game.board:
+                    blocked.add(position)
+        return blocked
+
+    def _has_adjacent_tile(self, game: GameState, x: int, y: int) -> bool:
+        return any((x + dx, y + dy) in game.board for dx, dy in STEP_BY_DIRECTION.values())
 
     def _matches_neighbors(self, game: GameState, x: int, y: int, edges: Dict[str, str]) -> bool:
         has_neighbor = False

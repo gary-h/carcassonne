@@ -15,9 +15,15 @@ class GameStore:
         self.bot_registry = BotRegistry()
         self._lock = Lock()
 
-    def create_game(self, seed: Optional[int] = None, *, pending_bot_counts: Optional[Dict[str, int]] = None) -> GameState:
+    def create_game(
+        self,
+        seed: Optional[int] = None,
+        *,
+        pending_bot_counts: Optional[Dict[str, int]] = None,
+        use_void_cards: bool = False,
+    ) -> GameState:
         with self._lock:
-            game = self.engine.create_game(seed=seed)
+            game = self.engine.create_game(seed=seed, use_void_cards=use_void_cards)
             requested = pending_bot_counts or {}
             known_slugs = {definition.slug for definition in self.bot_registry.list_bots()}
             normalized = {key: max(0, int(value)) for key, value in requested.items() if key in known_slugs}
@@ -56,9 +62,15 @@ class GameStore:
                 self._materialize_pending_bots(game)
             return player
 
-    def create_bot_only_game(self, seed: Optional[int] = None, *, pending_bot_counts: Optional[Dict[str, int]] = None) -> GameState:
+    def create_bot_only_game(
+        self,
+        seed: Optional[int] = None,
+        *,
+        pending_bot_counts: Optional[Dict[str, int]] = None,
+        use_void_cards: bool = False,
+    ) -> GameState:
         with self._lock:
-            game = self.engine.create_game(seed=seed)
+            game = self.engine.create_game(seed=seed, use_void_cards=use_void_cards)
             requested = pending_bot_counts or {}
             known_slugs = {definition.slug for definition in self.bot_registry.list_bots()}
             normalized = {key: max(0, int(value)) for key, value in requested.items() if key in known_slugs}
