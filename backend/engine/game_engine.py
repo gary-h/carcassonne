@@ -33,7 +33,7 @@ class GameEngine:
         game.message_log.append("Game created. Share the game ID with other players, then start when ready.")
         return game
 
-    def add_player(self, game: GameState, name: Optional[str] = None, is_bot: bool = False) -> PlayerState:
+    def add_player(self, game: GameState, name: Optional[str] = None, is_bot: bool = False, bot_policy: Optional[str] = None) -> PlayerState:
         if game.status != "waiting":
             raise InvalidMoveError("This game has already started.")
         if len(game.players) >= game.max_players:
@@ -43,7 +43,7 @@ class GameEngine:
             name=(name or f"Player {len(game.players) + 1}").strip() or f"Player {len(game.players) + 1}",
             color=PLAYER_COLORS[len(game.players)],
             is_bot=is_bot,
-            bot_policy="basic_heuristic" if is_bot else None,
+            bot_policy=bot_policy if is_bot else None,
         )
         game.players.append(player)
         if game.host_player_id is None:

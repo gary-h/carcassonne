@@ -43,7 +43,7 @@ class GameState:
     status: str = "waiting"
     host_player_id: Optional[str] = None
     max_players: int = 5
-    pending_basic_bot_count: int = 0
+    pending_bot_counts: Dict[str, int] = field(default_factory=dict)
     players: List[PlayerState] = field(default_factory=list)
     board: Dict[Tuple[int, int], PlacedTile] = field(default_factory=dict)
     deck: List[str] = field(default_factory=list)

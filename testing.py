@@ -96,15 +96,16 @@ def main() -> None:
     assert farm_game.players[0].score == 3, "Farm scoring should award 3 points per completed adjacent city."
 
     # Bot path: creating a mixed game with bots should allow humans to join and bots to respond.
-    bot_create = client.post("/games/create", json={"basic_bot_count": 2})
+    bot_create = client.post("/games/create", json={"easy_bot_count": 1, "medium_bot_count": 1, "hard_bot_count": 1})
     bot_create.raise_for_status()
     bot_game_id = bot_create.json()["game_id"]
     bot_join = client.post(f"/games/{bot_game_id}/join", json={"name": "Solo"})
     bot_join.raise_for_status()
     bot_player_id = bot_join.json()["player_id"]
     bot_state = bot_join.json()["game"]
-    bot_count = len([player for player in bot_state["players"] if player["is_bot"]])
-    assert bot_count == 2, "Expected exactly two bot players in a mixed bot game."
+    bots = [player for player in bot_state["players"] if player["is_bot"]]
+    assert len(bots) == 3, "Expected exactly three bot players in a mixed bot game."
+    assert {player["bot_policy"] for player in bots} == {"easy", "medium", "hard"}
 
     extra_human = client.post(f"/games/{bot_game_id}/join", json={"name": "Friend"})
     extra_human.raise_for_status()
@@ -126,6 +127,18 @@ def main() -> None:
     bot_response.raise_for_status()
     post_bot_state = bot_response.json()["game"]
     assert len(post_bot_state["board"]) >= len(bot_state["board"]) + 2, "Bot should make its move immediately after the human move."
+
+    # Bot-only path: creating with only bots should auto-start and advance without a human player.
+    bot_only_create = client.post("/games/create", json={"easy_bot_count": 1, "hard_bot_count": 1, "bot_only": True})
+    bot_only_create.raise_for_status()
+    bot_only_state = bot_only_create.json()["game"]
+    assert bot_only_state["status"] == "active"
+    assert len(bot_only_state["players"]) == 2
+    assert all(player["is_bot"] for player in bot_only_state["players"])
+    assert bot_only_state["current_turn"] is not None
+    before_tiles = len(bot_only_state["board"])
+    advanced_state = client.get(f"/games/{bot_only_create.json()['game_id']}").json()
+    assert len(advanced_state["board"]) > before_tiles or advanced_state["status"] == "finished"
 
 
 if __name__ == "__main__":

@@ -13,7 +13,10 @@ router = APIRouter()
 
 class CreateGameRequest(BaseModel):
     seed: Optional[int] = None
-    basic_bot_count: int = 0
+    easy_bot_count: int = 0
+    medium_bot_count: int = 0
+    hard_bot_count: int = 0
+    bot_only: bool = False
 
 
 class JoinGameRequest(BaseModel):
@@ -26,11 +29,24 @@ class StartGameRequest(BaseModel):
 
 @router.post("/create")
 def create_game(payload: CreateGameRequest | None = None):
-    basic_bot_count = 0 if payload is None else max(0, payload.basic_bot_count)
-    game = game_store.create_game(
-        seed=None if payload is None else payload.seed,
-        pending_basic_bot_count=basic_bot_count,
-    )
+    pending_bot_counts = {
+        "easy": 0 if payload is None else payload.easy_bot_count,
+        "medium": 0 if payload is None else payload.medium_bot_count,
+        "hard": 0 if payload is None else payload.hard_bot_count,
+    }
+    if payload is not None and payload.bot_only:
+        total_bots = sum(pending_bot_counts.values())
+        if total_bots < 2:
+            raise HTTPException(status_code=400, detail="Bot-only games require at least two bots.")
+        game = game_store.create_bot_only_game(
+            seed=payload.seed,
+            pending_bot_counts=pending_bot_counts,
+        )
+    else:
+        game = game_store.create_game(
+            seed=None if payload is None else payload.seed,
+            pending_bot_counts=pending_bot_counts,
+        )
     return {
         "game_id": game.game_id,
         "game": game_store.engine.serialize(game),
@@ -69,4 +85,6 @@ def get_game(game_id: str, player_id: Optional[str] = None):
     game = game_store.get_game(game_id)
     if game is None:
         raise HTTPException(status_code=404, detail="Game not found")
+    if player_id is None:
+        game = game_store.advance_bot_only_game(game_id, steps=1)
     return game_store.engine.serialize(game, viewer_player_id=player_id)

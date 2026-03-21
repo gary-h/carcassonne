@@ -14,7 +14,9 @@ const elements = {
   gamePanel: document.getElementById("game-panel"),
   turnPanel: document.getElementById("turn-panel"),
   playerName: document.getElementById("player-name"),
-  basicBotCount: document.getElementById("basic-bot-count"),
+  easyBotCount: document.getElementById("easy-bot-count"),
+  mediumBotCount: document.getElementById("medium-bot-count"),
+  hardBotCount: document.getElementById("hard-bot-count"),
   createGame: document.getElementById("create-game"),
   joinGameId: document.getElementById("join-game-id"),
   joinGame: document.getElementById("join-game"),
@@ -103,15 +105,33 @@ function bindEvents() {
 }
 
 async function createGame() {
-  const name = normalizedPlayerName();
+  const rawName = elements.playerName.value.trim();
+  const botTotal =
+    Number(elements.easyBotCount.value || 0)
+    + Number(elements.mediumBotCount.value || 0)
+    + Number(elements.hardBotCount.value || 0);
+  const botOnly = rawName === "" && botTotal >= 2;
   const response = await fetchJson("/games/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ basic_bot_count: Number(elements.basicBotCount.value || 0) }),
+    body: JSON.stringify({
+      easy_bot_count: Number(elements.easyBotCount.value || 0),
+      medium_bot_count: Number(elements.mediumBotCount.value || 0),
+      hard_bot_count: Number(elements.hardBotCount.value || 0),
+      bot_only: botOnly,
+    }),
   });
   state.gameId = response.game_id;
   updateUrl();
-  await joinCurrentGame(name);
+  if (botOnly) {
+    state.playerId = "";
+    state.playerName = "";
+    localStorage.removeItem("carcassonne.playerId");
+    render(response.game);
+    startPolling();
+    return;
+  }
+  await joinCurrentGame(rawName || "Player");
 }
 
 async function joinGame() {
@@ -190,7 +210,7 @@ function renderPlayers(game) {
       <img class="avatar" src="${standingMeeples[player.color]}" alt="${player.color} meeple">
       <div>
         <strong>${escapeHtml(player.name)}${isViewer ? " (you)" : ""}${game.host_player_id === player.id ? " (host)" : ""}</strong>
-        <div class="muted">Score ${player.score} · Meeples ${player.meeples_available}${player.is_bot ? " · Bot" : ""}</div>
+        <div class="muted">Score ${player.score} · Meeples ${player.meeples_available}${player.is_bot ? ` · ${formatBotPolicy(player.bot_policy)}` : ""}</div>
       </div>
       <div>${isCurrent ? "Turn" : ""}</div>
     `;
@@ -393,6 +413,19 @@ function describeStatus(game) {
   }
   const current = game.players.find((player) => player.id === game.current_player_id);
   return current ? `${current.name}${current.is_bot ? " (bot)" : ""} to play.` : "Game in progress.";
+}
+
+function formatBotPolicy(policy) {
+  if (policy === "easy") {
+    return "Easy bot";
+  }
+  if (policy === "medium") {
+    return "Medium bot";
+  }
+  if (policy === "hard") {
+    return "Hard bot";
+  }
+  return "Bot";
 }
 
 async function startGame() {
