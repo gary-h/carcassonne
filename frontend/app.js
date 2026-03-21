@@ -2,6 +2,8 @@ const state = {
   gameId: new URLSearchParams(window.location.search).get("game") || "",
   playerId: localStorage.getItem("carcassonne.playerId") || "",
   playerName: localStorage.getItem("carcassonne.playerName") || "",
+  botCatalog: [],
+  botSelections: [],
   rotation: 0,
   selectedMove: null,
   selectedFeatureId: "",
@@ -14,9 +16,8 @@ const elements = {
   gamePanel: document.getElementById("game-panel"),
   turnPanel: document.getElementById("turn-panel"),
   playerName: document.getElementById("player-name"),
-  easyBotCount: document.getElementById("easy-bot-count"),
-  mediumBotCount: document.getElementById("medium-bot-count"),
-  hardBotCount: document.getElementById("hard-bot-count"),
+  insertBot: document.getElementById("insert-bot"),
+  botConfigList: document.getElementById("bot-config-list"),
   createGame: document.getElementById("create-game"),
   joinGameId: document.getElementById("join-game-id"),
   joinGame: document.getElementById("join-game"),
@@ -81,6 +82,7 @@ function init() {
   elements.playerName.value = state.playerName;
   elements.joinGameId.value = state.gameId;
   bindEvents();
+  loadBotCatalog();
   if (state.gameId) {
     startPolling();
   }
@@ -90,6 +92,7 @@ function bindEvents() {
   elements.createGame.addEventListener("click", createGame);
   elements.joinGame.addEventListener("click", joinGame);
   elements.copyLink.addEventListener("click", copyLink);
+  elements.insertBot.addEventListener("click", insertBotSelection);
   elements.startGame.addEventListener("click", startGame);
   elements.rotateLeft.addEventListener("click", () => rotate(-1));
   elements.rotateRight.addEventListener("click", () => rotate(1));
@@ -106,18 +109,14 @@ function bindEvents() {
 
 async function createGame() {
   const rawName = elements.playerName.value.trim();
-  const botTotal =
-    Number(elements.easyBotCount.value || 0)
-    + Number(elements.mediumBotCount.value || 0)
-    + Number(elements.hardBotCount.value || 0);
+  const botCounts = currentBotCounts();
+  const botTotal = Object.values(botCounts).reduce((sum, value) => sum + value, 0);
   const botOnly = rawName === "" && botTotal >= 2;
   const response = await fetchJson("/games/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      easy_bot_count: Number(elements.easyBotCount.value || 0),
-      medium_bot_count: Number(elements.mediumBotCount.value || 0),
-      hard_bot_count: Number(elements.hardBotCount.value || 0),
+      bot_counts: botCounts,
       bot_only: botOnly,
     }),
   });
@@ -416,16 +415,8 @@ function describeStatus(game) {
 }
 
 function formatBotPolicy(policy) {
-  if (policy === "easy") {
-    return "Easy bot";
-  }
-  if (policy === "medium") {
-    return "Medium bot";
-  }
-  if (policy === "hard") {
-    return "Hard bot";
-  }
-  return "Bot";
+  const match = state.botCatalog.find((bot) => bot.slug === policy);
+  return match ? match.name : "Bot";
 }
 
 async function startGame() {
@@ -451,6 +442,91 @@ function copyLink() {
 function normalizedPlayerName() {
   const raw = elements.playerName.value.trim();
   return raw || "Player";
+}
+
+async function loadBotCatalog() {
+  try {
+    const response = await fetchJson("/games/bots");
+    state.botCatalog = response.bots || [];
+  } catch (error) {
+    state.botCatalog = [];
+  }
+  renderBotControls();
+}
+
+function renderBotControls() {
+  elements.botConfigList.innerHTML = "";
+  if (state.botSelections.length === 0) {
+    const hint = document.createElement("p");
+    hint.className = "muted";
+    hint.textContent = state.botCatalog.length === 0
+      ? "No bots available in /bots."
+      : "No bots inserted yet.";
+    elements.botConfigList.appendChild(hint);
+    return;
+  }
+  state.botSelections.forEach((slug, index) => {
+    const row = document.createElement("div");
+    row.className = "actions";
+
+    const select = document.createElement("select");
+    select.dataset.botIndex = String(index);
+    for (const bot of state.botCatalog) {
+      const option = document.createElement("option");
+      option.value = bot.slug;
+      option.textContent = bot.name;
+      option.selected = bot.slug === slug;
+      select.appendChild(option);
+    }
+    select.addEventListener("change", (event) => {
+      state.botSelections[index] = event.target.value;
+      renderBotControls();
+    });
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "secondary";
+    removeButton.textContent = "Remove";
+    removeButton.addEventListener("click", () => {
+      state.botSelections.splice(index, 1);
+      renderBotControls();
+    });
+
+    row.appendChild(select);
+    row.appendChild(removeButton);
+    elements.botConfigList.appendChild(row);
+
+    const selectedBot = state.botCatalog.find((bot) => bot.slug === slug);
+    if (selectedBot && selectedBot.description) {
+      const hint = document.createElement("p");
+      hint.className = "muted";
+      hint.textContent = selectedBot.description;
+      elements.botConfigList.appendChild(hint);
+    }
+  });
+}
+
+function insertBotSelection() {
+  if (state.botCatalog.length === 0) {
+    setStatus("No bots are available to insert.");
+    return;
+  }
+  const hasHuman = elements.playerName.value.trim() !== "";
+  const maxBots = hasHuman ? 4 : 5;
+  if (state.botSelections.length >= maxBots) {
+    setStatus("A game can include at most five total players.");
+    return;
+  }
+  state.botSelections.push(state.botCatalog[0].slug);
+  renderBotControls();
+}
+
+function currentBotCounts() {
+  const counts = {};
+  for (const slug of state.botSelections) {
+    counts[slug] = (counts[slug] || 0) + 1;
+  }
+  return counts;
 }
 
 function updateUrl() {

@@ -23,36 +23,10 @@
             <span>Name (leave empty for just bots)</span>
             <input id="player-name" maxlength="24" placeholder="Player name">
           </label>
-          <label class="field">
-            <span>Easy bots</span>
-            <select id="easy-bot-count">
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>Medium bots</span>
-            <select id="medium-bot-count">
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>Hard bots</span>
-            <select id="hard-bot-count">
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
-          </label>
+          <div class="actions">
+            <button class="secondary" id="insert-bot" type="button">Insert bot</button>
+          </div>
+          <div id="bot-config-list"></div>
           <div class="actions">
             <button id="create-game">Create game</button>
           </div>

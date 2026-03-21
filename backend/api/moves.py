@@ -5,6 +5,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from backend.bots.loader import BotLoadError
 from backend.engine.game_engine import InvalidMoveError
 from backend.storage.game_store import game_store
 
@@ -34,6 +35,6 @@ def submit_move(game_id: str, payload: SubmitMoveRequest):
             rotation=payload.rotation,
             feature_id=payload.feature_id,
         )
-    except InvalidMoveError as exc:
+    except (InvalidMoveError, BotLoadError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"game": game_store.engine.serialize(game, viewer_player_id=payload.player_id)}

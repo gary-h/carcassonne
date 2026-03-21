@@ -8,6 +8,12 @@ from backend.storage.game_store import game_store
 def main() -> None:
     client = TestClient(app)
 
+    bot_catalog = client.get("/games/bots")
+    bot_catalog.raise_for_status()
+    bot_slugs = {bot["slug"] for bot in bot_catalog.json()["bots"]}
+    assert {"easy", "medium", "hard"}.issubset(bot_slugs)
+    assert "template" not in bot_slugs
+
     create = client.post("/games/create", json={})
     create.raise_for_status()
     game_id = create.json()["game_id"]
@@ -96,7 +102,7 @@ def main() -> None:
     assert farm_game.players[0].score == 3, "Farm scoring should award 3 points per completed adjacent city."
 
     # Bot path: creating a mixed game with bots should allow humans to join and bots to respond.
-    bot_create = client.post("/games/create", json={"easy_bot_count": 1, "medium_bot_count": 1, "hard_bot_count": 1})
+    bot_create = client.post("/games/create", json={"bot_counts": {"easy": 1, "medium": 1, "hard": 1}})
     bot_create.raise_for_status()
     bot_game_id = bot_create.json()["game_id"]
     bot_join = client.post(f"/games/{bot_game_id}/join", json={"name": "Solo"})
@@ -129,7 +135,7 @@ def main() -> None:
     assert len(post_bot_state["board"]) >= len(bot_state["board"]) + 2, "Bot should make its move immediately after the human move."
 
     # Bot-only path: creating with only bots should auto-start and advance without a human player.
-    bot_only_create = client.post("/games/create", json={"easy_bot_count": 1, "hard_bot_count": 1, "bot_only": True})
+    bot_only_create = client.post("/games/create", json={"bot_counts": {"easy": 1, "hard": 1}, "bot_only": True})
     bot_only_create.raise_for_status()
     bot_only_state = bot_only_create.json()["game"]
     assert bot_only_state["status"] == "active"
