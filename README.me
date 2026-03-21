@@ -6,8 +6,11 @@ uvicorn backend.main:app --reload
 
 Then open http://127.0.0.1:8000
 
+The game supports 2 to 5 players.
+
 Player 1 enters a name and clicks Create game.
-Player 2 opens http://127.0.0.1:8000, enters a name, and joins using the game ID instead of creating a new one.
+Other players open http://127.0.0.1:8000, enter a name, and join using the game ID instead of creating a new one.
+Once at least 2 players have joined, the host clicks Start game.
 
 To play remotely:
 Install ngrok from ngrok.com/download.
@@ -18,4 +21,4 @@ uvicorn backend.main:app --reload
 in a second terminal, run
 ngrok http 8000
 
-Player 1 creates a game locally. -> Shares the ngrok URL plus the full ?game=... link with Player 2. -> Player 2 opens that link, enters a name, and clicks Join game.
+Player 1 creates a game locally. -> Shares the ngrok URL plus the full ?game=... link with the other players. -> Each player opens that link, enters a name, and clicks Join game. -> The host starts once the lobby is ready.

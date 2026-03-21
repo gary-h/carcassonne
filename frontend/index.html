@@ -11,9 +11,9 @@
       <aside class="sidebar">
         <div class="panel">
           <p class="eyebrow">Carcassonne</p>
-          <h1>Remote two-player base game</h1>
+          <h1>Remote multiplayer base game</h1>
           <p class="muted">
-            FastAPI-hosted play for two humans now, with a stable move API for AI later.
+            FastAPI-hosted play for 2 to 5 humans now, with a stable move API for AI later.
           </p>
         </div>
 
@@ -34,7 +34,7 @@
           <div class="actions">
             <button class="secondary" id="join-game">Join game</button>
           </div>
-          <p class="hint">Share the game ID or URL through ngrok so the second player can join.</p>
+          <p class="hint">Share the game ID or URL through ngrok so up to four other players can join.</p>
         </div>
 
         <div class="panel hidden" id="game-panel">
@@ -46,6 +46,9 @@
             <button class="secondary" id="copy-link">Copy link</button>
           </div>
           <p class="hint" id="turn-banner">Waiting for state...</p>
+          <div class="actions hidden" id="lobby-actions">
+            <button id="start-game">Start game</button>
+          </div>
           <div class="player-list" id="player-list"></div>
           <div class="stats">
             <div><span>Deck</span><strong id="remaining-tiles">-</strong></div>

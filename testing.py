@@ -20,7 +20,19 @@ def main() -> None:
     join_b = client.post(f"/games/{game_id}/join", json={"name": "Bob"})
     join_b.raise_for_status()
     player_b = join_b.json()["player_id"]
-    print("Players:", player_a, player_b)
+    join_c = client.post(f"/games/{game_id}/join", json={"name": "Cara"})
+    join_c.raise_for_status()
+    join_d = client.post(f"/games/{game_id}/join", json={"name": "Dan"})
+    join_d.raise_for_status()
+    join_e = client.post(f"/games/{game_id}/join", json={"name": "Eve"})
+    join_e.raise_for_status()
+    print("Players:", player_a, player_b, join_c.json()["player_id"], join_d.json()["player_id"], join_e.json()["player_id"])
+
+    join_f = client.post(f"/games/{game_id}/join", json={"name": "Frank"})
+    assert join_f.status_code == 400
+
+    start = client.post(f"/games/{game_id}/start", json={"player_id": player_a})
+    start.raise_for_status()
 
     state = client.get(f"/games/{game_id}", params={"player_id": player_a}).json()
     for turn in range(8):
@@ -47,6 +59,7 @@ def main() -> None:
     regression_game = game_store.engine.create_game(seed=1)
     game_store.engine.add_player(regression_game, "A")
     game_store.engine.add_player(regression_game, "B")
+    game_store.engine.start_game(regression_game, regression_game.host_player_id)
     assert regression_game.current_turn is not None
     if regression_game.current_turn.tile_id == "curve":
         illegal = [

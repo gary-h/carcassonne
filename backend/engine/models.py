@@ -39,6 +39,8 @@ class CurrentTurn:
 class GameState:
     game_id: str
     status: str = "waiting"
+    host_player_id: Optional[str] = None
+    max_players: int = 5
     players: List[PlayerState] = field(default_factory=list)
     board: Dict[Tuple[int, int], PlacedTile] = field(default_factory=dict)
     deck: List[str] = field(default_factory=list)

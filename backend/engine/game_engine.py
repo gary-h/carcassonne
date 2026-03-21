@@ -10,6 +10,8 @@ from backend.engine.tile_library import OPPOSITE_DIRECTION, OPPOSITE_PORT, START
 
 
 PLAYER_COLORS = ["red", "blue", "green", "yellow", "black"]
+MIN_PLAYERS = 2
+MAX_PLAYERS = 5
 
 
 class InvalidMoveError(ValueError):
@@ -26,25 +28,44 @@ class GameEngine:
                 continue
             deck.extend([tile_id] * tile.count)
         rng.shuffle(deck)
-        game = GameState(game_id=game_id, deck=deck)
+        game = GameState(game_id=game_id, deck=deck, max_players=MAX_PLAYERS)
         game.board[(0, 0)] = PlacedTile(tile_id=START_TILE_ID, rotation=0, x=0, y=0)
-        game.message_log.append("Game created. Share the game ID with another player to join.")
+        game.message_log.append("Game created. Share the game ID with other players, then start when ready.")
         return game
 
     def add_player(self, game: GameState, name: Optional[str] = None) -> PlayerState:
-        if len(game.players) >= 2:
-            raise InvalidMoveError("This game already has two players.")
+        if game.status != "waiting":
+            raise InvalidMoveError("This game has already started.")
+        if len(game.players) >= game.max_players:
+            raise InvalidMoveError(f"This game already has the maximum of {game.max_players} players.")
         player = PlayerState(
             id=uuid4().hex[:8],
             name=(name or f"Player {len(game.players) + 1}").strip() or f"Player {len(game.players) + 1}",
             color=PLAYER_COLORS[len(game.players)],
         )
         game.players.append(player)
-        game.message_log.append(f"{player.name} joined the game.")
-        if len(game.players) == 2 and game.status == "waiting":
-            game.status = "active"
-            self._prepare_turn(game)
+        if game.host_player_id is None:
+            game.host_player_id = player.id
+            game.message_log.append(f"{player.name} joined as host.")
+        else:
+            game.message_log.append(f"{player.name} joined the game.")
+        if len(game.players) >= MIN_PLAYERS and len(game.players) < game.max_players:
+            game.message_log.append("Host can start the game at any time.")
+        if len(game.players) == game.max_players:
+            game.message_log.append("Lobby is full. Host can start the game.")
         return player
+
+    def start_game(self, game: GameState, player_id: str) -> None:
+        if game.status != "waiting":
+            raise InvalidMoveError("This game has already started.")
+        if game.host_player_id != player_id:
+            raise InvalidMoveError("Only the host can start the game.")
+        if len(game.players) < MIN_PLAYERS:
+            raise InvalidMoveError(f"At least {MIN_PLAYERS} players are required to start.")
+        host = self._player_by_id(game, player_id)
+        game.status = "active"
+        game.message_log.append(f"{host.name} started the game.")
+        self._prepare_turn(game)
 
     def submit_turn(
         self,
@@ -108,6 +129,9 @@ class GameEngine:
         return {
             "game_id": game.game_id,
             "status": game.status,
+            "host_player_id": game.host_player_id,
+            "max_players": game.max_players,
+            "min_players_to_start": MIN_PLAYERS,
             "players": [
                 {
                     "id": player.id,
@@ -430,6 +454,6 @@ class GameEngine:
 
     def _require_active_game(self, game: GameState) -> None:
         if game.status == "waiting":
-            raise InvalidMoveError("The game needs two players before play can start.")
+            raise InvalidMoveError("The host must start the game once at least two players have joined.")
         if game.status == "finished":
             raise InvalidMoveError("This game has already finished.")

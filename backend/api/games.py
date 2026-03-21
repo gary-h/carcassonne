@@ -19,6 +19,10 @@ class JoinGameRequest(BaseModel):
     name: Optional[str] = None
 
 
+class StartGameRequest(BaseModel):
+    player_id: str
+
+
 @router.post("/create")
 def create_game(payload: CreateGameRequest | None = None):
     game = game_store.create_game(seed=None if payload is None else payload.seed)
@@ -41,6 +45,18 @@ def join_game(game_id: str, payload: JoinGameRequest):
         "player_id": player.id,
         "game": game_store.engine.serialize(game, viewer_player_id=player.id),
     }
+
+
+@router.post("/{game_id}/start")
+def start_game(game_id: str, payload: StartGameRequest):
+    game = game_store.get_game(game_id)
+    if game is None:
+        raise HTTPException(status_code=404, detail="Game not found")
+    try:
+        game_store.engine.start_game(game, payload.player_id)
+    except InvalidMoveError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"game": game_store.engine.serialize(game, viewer_player_id=payload.player_id)}
 
 
 @router.get("/{game_id}")

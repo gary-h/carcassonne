@@ -19,6 +19,8 @@ const elements = {
   joinGame: document.getElementById("join-game"),
   gameIdLabel: document.getElementById("game-id-label"),
   copyLink: document.getElementById("copy-link"),
+  lobbyActions: document.getElementById("lobby-actions"),
+  startGame: document.getElementById("start-game"),
   turnBanner: document.getElementById("turn-banner"),
   playerList: document.getElementById("player-list"),
   remainingTiles: document.getElementById("remaining-tiles"),
@@ -85,6 +87,7 @@ function bindEvents() {
   elements.createGame.addEventListener("click", createGame);
   elements.joinGame.addEventListener("click", joinGame);
   elements.copyLink.addEventListener("click", copyLink);
+  elements.startGame.addEventListener("click", startGame);
   elements.rotateLeft.addEventListener("click", () => rotate(-1));
   elements.rotateRight.addEventListener("click", () => rotate(1));
   elements.submitMove.addEventListener("click", submitMove);
@@ -160,10 +163,19 @@ function render(game) {
   elements.remainingTiles.textContent = String(game.remaining_tiles);
   elements.discardedTiles.textContent = String(game.discarded_tiles);
   elements.statusLine.textContent = describeStatus(game);
+  renderLobbyActions(game);
   renderPlayers(game);
   renderTurn(game);
   renderBoard(game);
   renderLog(game.messages || []);
+}
+
+function renderLobbyActions(game) {
+  const canStart = game.status === "waiting"
+    && game.host_player_id === state.playerId
+    && game.players.length >= game.min_players_to_start;
+  elements.lobbyActions.classList.toggle("hidden", !canStart);
+  elements.startGame.disabled = !canStart;
 }
 
 function renderPlayers(game) {
@@ -176,7 +188,7 @@ function renderPlayers(game) {
     card.innerHTML = `
       <img class="avatar" src="${standingMeeples[player.color]}" alt="${player.color} meeple">
       <div>
-        <strong>${escapeHtml(player.name)}${isViewer ? " (you)" : ""}</strong>
+        <strong>${escapeHtml(player.name)}${isViewer ? " (you)" : ""}${game.host_player_id === player.id ? " (host)" : ""}</strong>
         <div class="muted">Score ${player.score} · Meeples ${player.meeples_available}</div>
       </div>
       <div>${isCurrent ? "Turn" : ""}</div>
@@ -190,7 +202,19 @@ function renderTurn(game) {
   const isViewerTurn = game.current_player_id && game.current_player_id === state.playerId;
   if (!turn) {
     elements.turnPanel.classList.add("hidden");
-    elements.turnBanner.textContent = game.status === "waiting" ? "Waiting for a second player." : "Game finished.";
+    if (game.status === "waiting") {
+      const seatsOpen = game.max_players - game.players.length;
+      if (game.players.length < game.min_players_to_start) {
+        const needed = game.min_players_to_start - game.players.length;
+        elements.turnBanner.textContent = `Waiting for ${needed} more player${needed === 1 ? "" : "s"} to join.`;
+      } else if (game.host_player_id === state.playerId) {
+        elements.turnBanner.textContent = `Lobby ready. Start now or wait for ${seatsOpen} more player${seatsOpen === 1 ? "" : "s"}.`;
+      } else {
+        elements.turnBanner.textContent = "Waiting for the host to start the game.";
+      }
+    } else {
+      elements.turnBanner.textContent = "Game finished.";
+    }
     return;
   }
 
@@ -360,7 +384,7 @@ function rotate(delta) {
 
 function describeStatus(game) {
   if (game.status === "waiting") {
-    return `Game ${game.game_id} is waiting for another player.`;
+    return `Lobby ${game.game_id}: ${game.players.length}/${game.max_players} players joined.`;
   }
   if (game.status === "finished") {
     const names = game.players.filter((player) => game.winner_ids.includes(player.id)).map((player) => player.name);
@@ -368,6 +392,18 @@ function describeStatus(game) {
   }
   const current = game.players.find((player) => player.id === game.current_player_id);
   return current ? `${current.name} to play.` : "Game in progress.";
+}
+
+async function startGame() {
+  if (!state.gameId || !state.playerId) {
+    return;
+  }
+  const response = await fetchJson(`/games/${state.gameId}/start`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ player_id: state.playerId }),
+  });
+  render(response.game);
 }
 
 function copyLink() {
