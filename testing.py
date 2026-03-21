@@ -15,6 +15,14 @@ def main() -> None:
     assert {"easy", "medium", "hard"}.issubset(bot_slugs)
     assert "template" not in bot_slugs
 
+    custom_meeples_create = client.post("/games/create", json={"initial_meeples": 9})
+    custom_meeples_create.raise_for_status()
+    custom_meeples_game_id = custom_meeples_create.json()["game_id"]
+    custom_join = client.post(f"/games/{custom_meeples_game_id}/join", json={"name": "Meeple Tester"})
+    custom_join.raise_for_status()
+    assert custom_join.json()["game"]["initial_meeples"] == 9
+    assert custom_join.json()["game"]["players"][0]["meeples_available"] == 9
+
     create = client.post("/games/create", json={})
     create.raise_for_status()
     game_id = create.json()["game_id"]

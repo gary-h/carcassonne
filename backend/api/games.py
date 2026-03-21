@@ -17,6 +17,7 @@ class CreateGameRequest(BaseModel):
     bot_counts: dict[str, int] = {}
     bot_only: bool = False
     use_void_cards: bool = False
+    initial_meeples: int = 7
 
 
 class JoinGameRequest(BaseModel):
@@ -39,6 +40,7 @@ def create_game(payload: CreateGameRequest | None = None):
                 seed=payload.seed,
                 pending_bot_counts=pending_bot_counts,
                 use_void_cards=payload.use_void_cards,
+                initial_meeples=payload.initial_meeples,
             )
         except (ValueError, BotLoadError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -48,6 +50,7 @@ def create_game(payload: CreateGameRequest | None = None):
                 seed=None if payload is None else payload.seed,
                 pending_bot_counts=pending_bot_counts,
                 use_void_cards=False if payload is None else payload.use_void_cards,
+                initial_meeples=7 if payload is None else payload.initial_meeples,
             )
         except BotLoadError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc

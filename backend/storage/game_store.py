@@ -21,9 +21,14 @@ class GameStore:
         *,
         pending_bot_counts: Optional[Dict[str, int]] = None,
         use_void_cards: bool = False,
+        initial_meeples: int = 7,
     ) -> GameState:
         with self._lock:
-            game = self.engine.create_game(seed=seed, use_void_cards=use_void_cards)
+            game = self.engine.create_game(
+                seed=seed,
+                use_void_cards=use_void_cards,
+                initial_meeples=initial_meeples,
+            )
             requested = pending_bot_counts or {}
             known_slugs = {definition.slug for definition in self.bot_registry.list_bots()}
             normalized = {key: max(0, int(value)) for key, value in requested.items() if key in known_slugs}
@@ -68,9 +73,14 @@ class GameStore:
         *,
         pending_bot_counts: Optional[Dict[str, int]] = None,
         use_void_cards: bool = False,
+        initial_meeples: int = 7,
     ) -> GameState:
         with self._lock:
-            game = self.engine.create_game(seed=seed, use_void_cards=use_void_cards)
+            game = self.engine.create_game(
+                seed=seed,
+                use_void_cards=use_void_cards,
+                initial_meeples=initial_meeples,
+            )
             requested = pending_bot_counts or {}
             known_slugs = {definition.slug for definition in self.bot_registry.list_bots()}
             normalized = {key: max(0, int(value)) for key, value in requested.items() if key in known_slugs}

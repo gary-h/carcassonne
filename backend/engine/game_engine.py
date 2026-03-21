@@ -19,7 +19,12 @@ class InvalidMoveError(ValueError):
 
 
 class GameEngine:
-    def create_game(self, seed: Optional[int] = None, use_void_cards: bool = False) -> GameState:
+    def create_game(
+        self,
+        seed: Optional[int] = None,
+        use_void_cards: bool = False,
+        initial_meeples: int = 7,
+    ) -> GameState:
         game_id = uuid4().hex[:8]
         rng = random.Random(seed if seed is not None else game_id)
         deck: List[str] = []
@@ -30,7 +35,14 @@ class GameEngine:
                 continue
             deck.extend([tile_id] * tile.count)
         rng.shuffle(deck)
-        game = GameState(game_id=game_id, deck=deck, max_players=MAX_PLAYERS, use_void_cards=use_void_cards)
+        normalized_meeples = max(1, min(10, initial_meeples))
+        game = GameState(
+            game_id=game_id,
+            deck=deck,
+            max_players=MAX_PLAYERS,
+            initial_meeples=normalized_meeples,
+            use_void_cards=use_void_cards,
+        )
         game.board[(0, 0)] = PlacedTile(tile_id=START_TILE_ID, rotation=0, x=0, y=0)
         game.message_log.append("Game created. Share the game ID with other players, then start when ready.")
         if use_void_cards:
@@ -48,6 +60,7 @@ class GameEngine:
             color=PLAYER_COLORS[len(game.players)],
             is_bot=is_bot,
             bot_policy=bot_policy if is_bot else None,
+            meeples_available=game.initial_meeples,
         )
         game.players.append(player)
         if game.host_player_id is None:
@@ -138,6 +151,7 @@ class GameEngine:
             "host_player_id": game.host_player_id,
             "max_players": game.max_players,
             "min_players_to_start": MIN_PLAYERS,
+            "initial_meeples": game.initial_meeples,
             "use_void_cards": game.use_void_cards,
             "players": [
                 {
