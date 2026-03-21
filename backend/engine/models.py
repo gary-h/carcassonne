@@ -9,6 +9,8 @@ class PlayerState:
     id: str
     name: str
     color: str
+    is_bot: bool = False
+    bot_policy: Optional[str] = None
     score: int = 0
     meeples_available: int = 7
 
@@ -41,6 +43,7 @@ class GameState:
     status: str = "waiting"
     host_player_id: Optional[str] = None
     max_players: int = 5
+    pending_basic_bot_count: int = 0
     players: List[PlayerState] = field(default_factory=list)
     board: Dict[Tuple[int, int], PlacedTile] = field(default_factory=dict)
     deck: List[str] = field(default_factory=list)

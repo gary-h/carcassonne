@@ -13,6 +13,7 @@ router = APIRouter()
 
 class CreateGameRequest(BaseModel):
     seed: Optional[int] = None
+    basic_bot_count: int = 0
 
 
 class JoinGameRequest(BaseModel):
@@ -25,7 +26,11 @@ class StartGameRequest(BaseModel):
 
 @router.post("/create")
 def create_game(payload: CreateGameRequest | None = None):
-    game = game_store.create_game(seed=None if payload is None else payload.seed)
+    basic_bot_count = 0 if payload is None else max(0, payload.basic_bot_count)
+    game = game_store.create_game(
+        seed=None if payload is None else payload.seed,
+        pending_basic_bot_count=basic_bot_count,
+    )
     return {
         "game_id": game.game_id,
         "game": game_store.engine.serialize(game),
@@ -38,7 +43,7 @@ def join_game(game_id: str, payload: JoinGameRequest):
     if game is None:
         raise HTTPException(status_code=404, detail="Game not found")
     try:
-        player = game_store.engine.add_player(game, name=payload.name)
+        player = game_store.add_player(game_id, name=payload.name)
     except InvalidMoveError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {
@@ -53,7 +58,7 @@ def start_game(game_id: str, payload: StartGameRequest):
     if game is None:
         raise HTTPException(status_code=404, detail="Game not found")
     try:
-        game_store.engine.start_game(game, payload.player_id)
+        game = game_store.start_game(game_id, payload.player_id)
     except InvalidMoveError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return {"game": game_store.engine.serialize(game, viewer_player_id=payload.player_id)}

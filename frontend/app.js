@@ -14,6 +14,7 @@ const elements = {
   gamePanel: document.getElementById("game-panel"),
   turnPanel: document.getElementById("turn-panel"),
   playerName: document.getElementById("player-name"),
+  basicBotCount: document.getElementById("basic-bot-count"),
   createGame: document.getElementById("create-game"),
   joinGameId: document.getElementById("join-game-id"),
   joinGame: document.getElementById("join-game"),
@@ -106,7 +107,7 @@ async function createGame() {
   const response = await fetchJson("/games/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({}),
+    body: JSON.stringify({ basic_bot_count: Number(elements.basicBotCount.value || 0) }),
   });
   state.gameId = response.game_id;
   updateUrl();
@@ -189,7 +190,7 @@ function renderPlayers(game) {
       <img class="avatar" src="${standingMeeples[player.color]}" alt="${player.color} meeple">
       <div>
         <strong>${escapeHtml(player.name)}${isViewer ? " (you)" : ""}${game.host_player_id === player.id ? " (host)" : ""}</strong>
-        <div class="muted">Score ${player.score} · Meeples ${player.meeples_available}</div>
+        <div class="muted">Score ${player.score} · Meeples ${player.meeples_available}${player.is_bot ? " · Bot" : ""}</div>
       </div>
       <div>${isCurrent ? "Turn" : ""}</div>
     `;
@@ -391,7 +392,7 @@ function describeStatus(game) {
     return `Game over. Winner${names.length > 1 ? "s" : ""}: ${names.join(", ") || "n/a"}.`;
   }
   const current = game.players.find((player) => player.id === game.current_player_id);
-  return current ? `${current.name} to play.` : "Game in progress.";
+  return current ? `${current.name}${current.is_bot ? " (bot)" : ""} to play.` : "Game in progress.";
 }
 
 async function startGame() {

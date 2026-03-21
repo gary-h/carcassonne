@@ -26,8 +26,8 @@ def submit_move(game_id: str, payload: SubmitMoveRequest):
     if game is None:
         raise HTTPException(status_code=404, detail="Game not found")
     try:
-        game_store.engine.submit_turn(
-            game,
+        game = game_store.submit_move(
+            game_id,
             player_id=payload.player_id,
             x=payload.x,
             y=payload.y,

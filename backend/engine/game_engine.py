@@ -33,7 +33,7 @@ class GameEngine:
         game.message_log.append("Game created. Share the game ID with other players, then start when ready.")
         return game
 
-    def add_player(self, game: GameState, name: Optional[str] = None) -> PlayerState:
+    def add_player(self, game: GameState, name: Optional[str] = None, is_bot: bool = False) -> PlayerState:
         if game.status != "waiting":
             raise InvalidMoveError("This game has already started.")
         if len(game.players) >= game.max_players:
@@ -42,13 +42,15 @@ class GameEngine:
             id=uuid4().hex[:8],
             name=(name or f"Player {len(game.players) + 1}").strip() or f"Player {len(game.players) + 1}",
             color=PLAYER_COLORS[len(game.players)],
+            is_bot=is_bot,
+            bot_policy="basic_heuristic" if is_bot else None,
         )
         game.players.append(player)
         if game.host_player_id is None:
             game.host_player_id = player.id
             game.message_log.append(f"{player.name} joined as host.")
         else:
-            game.message_log.append(f"{player.name} joined the game.")
+            game.message_log.append(f"{player.name} joined the game." if not is_bot else f"{player.name} bot joined the game.")
         if len(game.players) >= MIN_PLAYERS and len(game.players) < game.max_players:
             game.message_log.append("Host can start the game at any time.")
         if len(game.players) == game.max_players:
@@ -137,6 +139,8 @@ class GameEngine:
                     "id": player.id,
                     "name": player.name,
                     "color": player.color,
+                    "is_bot": player.is_bot,
+                    "bot_policy": player.bot_policy,
                     "score": player.score,
                     "meeples_available": player.meeples_available,
                 }

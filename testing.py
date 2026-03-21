@@ -95,6 +95,38 @@ def main() -> None:
     game_store.engine._finalize_game(farm_game)
     assert farm_game.players[0].score == 3, "Farm scoring should award 3 points per completed adjacent city."
 
+    # Bot path: creating a mixed game with bots should allow humans to join and bots to respond.
+    bot_create = client.post("/games/create", json={"basic_bot_count": 2})
+    bot_create.raise_for_status()
+    bot_game_id = bot_create.json()["game_id"]
+    bot_join = client.post(f"/games/{bot_game_id}/join", json={"name": "Solo"})
+    bot_join.raise_for_status()
+    bot_player_id = bot_join.json()["player_id"]
+    bot_state = bot_join.json()["game"]
+    bot_count = len([player for player in bot_state["players"] if player["is_bot"]])
+    assert bot_count == 2, "Expected exactly two bot players in a mixed bot game."
+
+    extra_human = client.post(f"/games/{bot_game_id}/join", json={"name": "Friend"})
+    extra_human.raise_for_status()
+
+    bot_start = client.post(f"/games/{bot_game_id}/start", json={"player_id": bot_player_id})
+    bot_start.raise_for_status()
+    bot_state = bot_start.json()["game"]
+    human_move = bot_state["current_turn"]["legal_moves"][0]
+    bot_response = client.post(
+        f"/moves/{bot_game_id}/submit",
+        json={
+            "player_id": bot_player_id,
+            "x": human_move["x"],
+            "y": human_move["y"],
+            "rotation": human_move["rotation"],
+            "feature_id": None,
+        },
+    )
+    bot_response.raise_for_status()
+    post_bot_state = bot_response.json()["game"]
+    assert len(post_bot_state["board"]) >= len(bot_state["board"]) + 2, "Bot should make its move immediately after the human move."
+
 
 if __name__ == "__main__":
     main()
