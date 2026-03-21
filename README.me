@@ -1,18 +1,21 @@
 assets taken from https://github.com/Koki-Yamaguchi/carcassonne-simulator/tree/main
 
-Run locally:
-
-```bash
+from the project root run
+pip install fastapi uvicorn pydantic pillow
 uvicorn backend.main:app --reload
-```
 
-Open `http://127.0.0.1:8000`, create a game, and share the URL or game ID with a second player. If you want to expose it publicly, run ngrok against the same port.
+Then open http://127.0.0.1:8000.
 
-API flow:
+Player 1 enters a name and clicks Create game.
+Player 2 opens http://127.0.0.1:8000, enters a name, and joins using the game ID instead of creating a new one.
 
-- `POST /games/create`
-- `POST /games/{game_id}/join`
-- `GET /games/{game_id}?player_id=...`
-- `POST /moves/{game_id}/submit`
+To play remotely:
+Install ngrok from ngrok.com/download.
 
-The browser client and any future AI agent use the same state and move contract. `GET /games/{game_id}` includes the current tile and all legal moves for the active turn.
+start the game using
+uvicorn backend.main:app --reload
+
+in a second terminal, run
+ngrok http 8000
+
+Player 1 creates a game locally. -> Shares the ngrok URL plus the full ?game=... link with Player 2. -> Player 2 opens that link, enters a name, and clicks Join game.
