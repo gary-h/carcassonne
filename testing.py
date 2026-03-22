@@ -172,6 +172,25 @@ def main() -> None:
     advanced_state = client.get(f"/games/{bot_only_create.json()['game_id']}").json()
     assert len(advanced_state["board"]) > before_tiles or advanced_state["status"] == "finished"
 
+    archive_game = GameState(game_id="archive-check", status="finished")
+    archive_game.players.extend(
+        [
+            PlayerState(id="p1", name="Archivist", color="red", score=10),
+            PlayerState(id="p2", name="Reviewer", color="blue", score=8),
+        ]
+    )
+    archive_game.winner_ids = ["p1"]
+    archive_game.board[(0, 0)] = PlacedTile(tile_id=START_TILE_ID, rotation=0, x=0, y=0)
+    game_store._record_history(archive_game, "game_finished", "Archive test game finished.", player_id="p1")
+    game_store._save_archive_if_finished(archive_game)
+    archives = client.get("/games/archives")
+    archives.raise_for_status()
+    archive_entry = next((entry for entry in archives.json()["archives"] if entry["game_id"] == "archive-check"), None)
+    assert archive_entry is not None, "Finished games should be saved to the local archive list."
+    archive_detail = client.get(f"/games/archives/{archive_entry['archive_id']}")
+    archive_detail.raise_for_status()
+    assert archive_detail.json()["summary"]["winner_names"] == ["Archivist"]
+
 
 if __name__ == "__main__":
     main()

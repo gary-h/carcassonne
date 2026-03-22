@@ -1,9 +1,11 @@
 const state = {
   gameId: new URLSearchParams(window.location.search).get("game") || "",
+  archiveId: new URLSearchParams(window.location.search).get("archive") || "",
   playerId: localStorage.getItem("carcassonne.playerId") || "",
   playerName: localStorage.getItem("carcassonne.playerName") || "",
   botCatalog: [],
   botSelections: [],
+  archiveCatalog: [],
   rotation: 0,
   selectedMove: null,
   selectedFeatureId: "",
@@ -13,6 +15,7 @@ const state = {
 
 const elements = {
   authPanel: document.getElementById("auth-panel"),
+  archivePanel: document.getElementById("archive-panel"),
   gamePanel: document.getElementById("game-panel"),
   turnPanel: document.getElementById("turn-panel"),
   playerName: document.getElementById("player-name"),
@@ -23,6 +26,8 @@ const elements = {
   createGame: document.getElementById("create-game"),
   joinGameId: document.getElementById("join-game-id"),
   joinGame: document.getElementById("join-game"),
+  refreshArchives: document.getElementById("refresh-archives"),
+  archiveList: document.getElementById("archive-list"),
   gameIdLabel: document.getElementById("game-id-label"),
   copyLink: document.getElementById("copy-link"),
   lobbyActions: document.getElementById("lobby-actions"),
@@ -85,6 +90,11 @@ function init() {
   elements.joinGameId.value = state.gameId;
   bindEvents();
   loadBotCatalog();
+  loadArchives();
+  if (state.archiveId) {
+    openArchive(state.archiveId);
+    return;
+  }
   if (state.gameId) {
     startPolling();
   }
@@ -93,6 +103,7 @@ function init() {
 function bindEvents() {
   elements.createGame.addEventListener("click", createGame);
   elements.joinGame.addEventListener("click", joinGame);
+  elements.refreshArchives.addEventListener("click", loadArchives);
   elements.copyLink.addEventListener("click", copyLink);
   elements.insertBot.addEventListener("click", insertBotSelection);
   elements.startGame.addEventListener("click", startGame);
@@ -125,6 +136,7 @@ async function createGame() {
     }),
   });
   state.gameId = response.game_id;
+  state.archiveId = "";
   updateUrl();
   if (botOnly) {
     state.playerId = "";
@@ -138,6 +150,7 @@ async function createGame() {
 }
 
 async function joinGame() {
+  state.archiveId = "";
   state.gameId = elements.joinGameId.value.trim();
   if (!state.gameId) {
     setStatus("Enter a game ID to join.");
@@ -166,6 +179,7 @@ function startPolling() {
   if (state.pollHandle) {
     clearInterval(state.pollHandle);
   }
+  state.archiveId = "";
   refreshGame();
   state.pollHandle = setInterval(refreshGame, 2000);
 }
@@ -182,6 +196,7 @@ async function refreshGame() {
 function render(game) {
   state.lastGame = game;
   elements.authPanel.classList.add("hidden");
+  elements.archivePanel.classList.add("hidden");
   elements.gamePanel.classList.remove("hidden");
   elements.gameIdLabel.textContent = game.game_id;
   elements.remainingTiles.textContent = String(game.remaining_tiles);
@@ -192,6 +207,23 @@ function render(game) {
   renderTurn(game);
   renderBoard(game);
   renderLog(game.messages || []);
+}
+
+function renderArchive(payload) {
+  const game = payload.final_state;
+  state.lastGame = game;
+  elements.authPanel.classList.add("hidden");
+  elements.archivePanel.classList.add("hidden");
+  elements.gamePanel.classList.remove("hidden");
+  elements.gameIdLabel.textContent = payload.archive_id;
+  elements.remainingTiles.textContent = String(game.remaining_tiles);
+  elements.discardedTiles.textContent = String(game.discarded_tiles);
+  elements.statusLine.textContent = `Reviewing archived game ${payload.archive_id}.`;
+  renderLobbyActions({ status: "finished", host_player_id: "", players: [], min_players_to_start: 99 });
+  renderPlayers(game);
+  renderTurn(game);
+  renderBoard(game);
+  renderLog((payload.history || []).map((entry) => entry.description));
 }
 
 function renderLobbyActions(game) {
@@ -224,6 +256,11 @@ function renderPlayers(game) {
 function renderTurn(game) {
   const turn = game.current_turn;
   const isViewerTurn = game.current_player_id && game.current_player_id === state.playerId;
+  if (state.archiveId) {
+    elements.turnPanel.classList.add("hidden");
+    elements.turnBanner.textContent = "Archived game review.";
+    return;
+  }
   if (!turn) {
     elements.turnPanel.classList.add("hidden");
     if (game.status === "waiting") {
@@ -436,7 +473,7 @@ async function startGame() {
 }
 
 function copyLink() {
-  if (!state.gameId) {
+  if (!state.gameId && !state.archiveId) {
     return;
   }
   navigator.clipboard.writeText(window.location.href);
@@ -537,6 +574,13 @@ function updateUrl() {
   const url = new URL(window.location.href);
   if (state.gameId) {
     url.searchParams.set("game", state.gameId);
+  } else {
+    url.searchParams.delete("game");
+  }
+  if (state.archiveId) {
+    url.searchParams.set("archive", state.archiveId);
+  } else {
+    url.searchParams.delete("archive");
   }
   history.replaceState({}, "", url);
 }
@@ -559,6 +603,54 @@ async function fetchJson(url, options = {}) {
     throw new Error(detail);
   }
   return response.json();
+}
+
+async function loadArchives() {
+  try {
+    const response = await fetchJson("/games/archives");
+    state.archiveCatalog = response.archives || [];
+  } catch (error) {
+    state.archiveCatalog = [];
+  }
+  renderArchiveList();
+}
+
+function renderArchiveList() {
+  elements.archiveList.innerHTML = "";
+  if (state.archiveCatalog.length === 0) {
+    const item = document.createElement("div");
+    item.className = "log-entry";
+    item.textContent = "No finished games saved yet.";
+    elements.archiveList.appendChild(item);
+    return;
+  }
+  for (const archive of state.archiveCatalog) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "secondary";
+    button.style.width = "100%";
+    button.textContent = archive.archive_id;
+    button.addEventListener("click", () => openArchive(archive.archive_id));
+    elements.archiveList.appendChild(button);
+
+    const meta = document.createElement("div");
+    meta.className = "log-entry";
+    meta.textContent = `${(archive.players || []).join(", ")} · winners: ${(archive.winner_names || []).join(", ") || "n/a"} · ${archive.turn_count} turns`;
+    elements.archiveList.appendChild(meta);
+  }
+}
+
+async function openArchive(archiveId) {
+  if (state.pollHandle) {
+    clearInterval(state.pollHandle);
+    state.pollHandle = null;
+  }
+  state.gameId = "";
+  state.playerId = "";
+  state.archiveId = archiveId;
+  updateUrl();
+  const payload = await fetchJson(`/games/archives/${archiveId}`);
+  renderArchive(payload);
 }
 
 function escapeHtml(value) {

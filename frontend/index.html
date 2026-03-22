@@ -12,9 +12,6 @@
         <div class="panel">
           <p class="eyebrow">Carcassonne</p>
           <h1>Remote multiplayer base game</h1>
-          <p class="muted">
-            FastAPI-hosted play for 2 to 5 humans now, with a stable move API for AI later.
-          </p>
         </div>
 
         <div class="panel" id="auth-panel">
@@ -60,6 +57,17 @@
             <button class="secondary" id="join-game">Join game</button>
           </div>
           <p class="hint">Share the game ID or URL through ngrok so up to four other players can join.</p>
+        </div>
+
+        <div class="panel" id="archive-panel">
+          <div class="game-header">
+            <div>
+              <p class="eyebrow">Archives</p>
+              <h2>Saved Games</h2>
+            </div>
+            <button class="secondary" id="refresh-archives" type="button">Refresh</button>
+          </div>
+          <div class="log" id="archive-list"></div>
         </div>
 
         <div class="panel hidden" id="game-panel">

@@ -54,4 +54,6 @@ class GameState:
     current_turn: Optional[CurrentTurn] = None
     winner_ids: List[str] = field(default_factory=list)
     message_log: List[str] = field(default_factory=list)
+    history: List[dict] = field(default_factory=list)
+    archive_saved: bool = False
     completed_features: Set[str] = field(default_factory=set)

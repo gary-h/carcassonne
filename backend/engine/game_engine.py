@@ -83,7 +83,10 @@ class GameEngine:
             raise InvalidMoveError(f"At least {MIN_PLAYERS} players are required to start.")
         host = self._player_by_id(game, player_id)
         game.status = "active"
-        game.message_log.append(f"{host.name} started the game.")
+        game.message_log.append(
+            f"{host.name} started the game with {len(game.players)} players, "
+            f"{game.initial_meeples} meeples each{', void cards enabled' if game.use_void_cards else ''}."
+        )
         self._prepare_turn(game)
 
     def submit_turn(
@@ -125,6 +128,7 @@ class GameEngine:
             player.meeples_available -= 1
 
         game.board[(x, y)] = placed_tile
+        game.message_log.append(self._placement_message(player.name, placed_tile))
         self._score_after_placement(game, placed_tile)
         self._advance_turn(game)
 
@@ -509,7 +513,17 @@ class GameEngine:
         high_score = max((player.score for player in game.players), default=0)
         game.winner_ids = [player.id for player in game.players if player.score == high_score]
         game.current_turn = None
-        game.message_log.append("Game finished.")
+        winner_names = ", ".join(self._player_by_id(game, player_id).name for player_id in game.winner_ids) or "n/a"
+        final_scores = ", ".join(f"{player.name} {player.score}" for player in game.players)
+        game.message_log.append(f"Game finished. Winner{'s' if len(game.winner_ids) != 1 else ''}: {winner_names}. Final scores: {final_scores}.")
+
+    def _placement_message(self, player_name: str, placed_tile: PlacedTile) -> str:
+        tile_name = TILE_LIBRARY[placed_tile.tile_id].name
+        rotation_degrees = placed_tile.rotation * 90
+        message = f"{player_name} placed {tile_name} at ({placed_tile.x}, {placed_tile.y}) rotated {rotation_degrees}°"
+        if placed_tile.meeple is None:
+            return message + " without a meeple."
+        return message + f" with a {placed_tile.meeple.kind} meeple on {placed_tile.meeple.feature_id}."
 
     def _player_by_id(self, game: GameState, player_id: str) -> PlayerState:
         for player in game.players:

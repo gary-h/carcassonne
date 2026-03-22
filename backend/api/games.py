@@ -68,6 +68,19 @@ def list_bots():
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@router.get("/archives")
+def list_archives():
+    return {"archives": game_store.list_archives()}
+
+
+@router.get("/archives/{archive_id}")
+def get_archive(archive_id: str):
+    try:
+        return game_store.load_archive(archive_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Archive not found") from exc
+
+
 @router.post("/{game_id}/join")
 def join_game(game_id: str, payload: JoinGameRequest):
     game = game_store.get_game(game_id)
