@@ -1,0 +1,2514 @@
+{
+  "archive_id": "archive-check-20260324T014824Z",
+  "saved_at": "2026-03-24T01:48:24.563634+00:00",
+  "summary": {
+    "archive_id": "archive-check-20260324T014824Z",
+    "game_id": "archive-check",
+    "saved_at": "2026-03-24T01:48:24.563636+00:00",
+    "players": [
+      "Archivist",
+      "Reviewer"
+    ],
+    "winner_ids": [
+      "p1"
+    ],
+    "winner_names": [
+      "Archivist"
+    ],
+    "final_scores": {
+      "Archivist": 10,
+      "Reviewer": 8
+    },
+    "turn_count": 0,
+    "use_void_cards": false,
+    "use_creepassonne": false,
+    "initial_meeples": 7
+  },
+  "final_state": {
+    "game_id": "archive-check",
+    "status": "finished",
+    "host_player_id": null,
+    "max_players": 5,
+    "min_players_to_start": 2,
+    "initial_meeples": 7,
+    "use_void_cards": false,
+    "use_creepassonne": false,
+    "players": [
+      {
+        "id": "p1",
+        "name": "Archivist",
+        "color": "red",
+        "is_bot": false,
+        "bot_policy": null,
+        "score": 10,
+        "meeples_available": 7
+      },
+      {
+        "id": "p2",
+        "name": "Reviewer",
+        "color": "blue",
+        "is_bot": false,
+        "bot_policy": null,
+        "score": 8,
+        "meeples_available": 7
+      }
+    ],
+    "board": [
+      {
+        "x": 0,
+        "y": 0,
+        "rotation": 0,
+        "tile_id": "city_cap_straight",
+        "tile": {
+          "id": "city_cap_straight",
+          "name": "City Cap With Straight",
+          "image_path": "/assets/img/tiles/city_cap_with_straight.png",
+          "edges": {
+            "N": "city",
+            "E": "road",
+            "S": "field",
+            "W": "road"
+          },
+          "features": [
+            {
+              "id": "city_1",
+              "kind": "city",
+              "edges": [
+                "N"
+              ],
+              "center": false,
+              "score_bonus": 0
+            },
+            {
+              "id": "road_1",
+              "kind": "road",
+              "edges": [
+                "E",
+                "W"
+              ],
+              "center": false,
+              "score_bonus": 0
+            },
+            {
+              "id": "field_1",
+              "kind": "field",
+              "edges": [
+                "En",
+                "Wn"
+              ],
+              "center": false,
+              "score_bonus": 0
+            },
+            {
+              "id": "field_2",
+              "kind": "field",
+              "edges": [
+                "Es",
+                "Se",
+                "Sw",
+                "Ws"
+              ],
+              "center": false,
+              "score_bonus": 0
+            }
+          ]
+        },
+        "meeple": null
+      }
+    ],
+    "current_player_id": null,
+    "viewer_player_id": null,
+    "current_turn": null,
+    "remaining_tiles": 0,
+    "discarded_tiles": 0,
+    "winner_ids": [
+      "p1"
+    ],
+    "messages": [],
+    "viewport": {
+      "min_x": -2,
+      "max_x": 2,
+      "min_y": -2,
+      "max_y": 2
+    },
+    "catalog": [
+      {
+        "id": "monastery",
+        "name": "Monastery",
+        "image_path": "/assets/img/tiles/monastery.png",
+        "edges": {
+          "N": "field",
+          "E": "field",
+          "S": "field",
+          "W": "field"
+        },
+        "features": [
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "Ne",
+              "En",
+              "Es",
+              "Se",
+              "Sw",
+              "Ws",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "monastery_1",
+            "kind": "monastery",
+            "edges": [],
+            "center": true,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "monastery_road",
+        "name": "Monastery With Road",
+        "image_path": "/assets/img/tiles/monastery_with_road.png",
+        "edges": {
+          "N": "field",
+          "E": "field",
+          "S": "road",
+          "W": "field"
+        },
+        "features": [
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "S"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "Ne",
+              "En",
+              "Es",
+              "Se",
+              "Sw",
+              "Ws",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "monastery_1",
+            "kind": "monastery",
+            "edges": [],
+            "center": true,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "straight",
+        "name": "Straight",
+        "image_path": "/assets/img/tiles/straight.png",
+        "edges": {
+          "N": "road",
+          "E": "field",
+          "S": "road",
+          "W": "field"
+        },
+        "features": [
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "N",
+              "S"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "Sw",
+              "Ws",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Ne",
+              "En",
+              "Es",
+              "Se"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "curve",
+        "name": "Curve",
+        "image_path": "/assets/img/tiles/curve.png",
+        "edges": {
+          "N": "field",
+          "E": "field",
+          "S": "road",
+          "W": "road"
+        },
+        "features": [
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "S",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "Ne",
+              "En",
+              "Es",
+              "Se",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "triple_road",
+        "name": "Triple Road",
+        "image_path": "/assets/img/tiles/triple_road.png",
+        "edges": {
+          "N": "field",
+          "E": "road",
+          "S": "road",
+          "W": "road"
+        },
+        "features": [
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "E",
+              "S",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "Ne",
+              "En",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Es",
+              "Se"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_3",
+            "kind": "field",
+            "edges": [
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "quadruple_road",
+        "name": "Quadruple Road",
+        "image_path": "/assets/img/tiles/quadruple_road.png",
+        "edges": {
+          "N": "road",
+          "E": "road",
+          "S": "road",
+          "W": "road"
+        },
+        "features": [
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "N",
+              "E",
+              "S",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Ne",
+              "En"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_3",
+            "kind": "field",
+            "edges": [
+              "Es",
+              "Se"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_4",
+            "kind": "field",
+            "edges": [
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "triangle",
+        "name": "Triangle",
+        "image_path": "/assets/img/tiles/triangle.png",
+        "edges": {
+          "N": "city",
+          "E": "field",
+          "S": "field",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "En",
+              "Es",
+              "Se",
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "triangle_coa",
+        "name": "Triangle With COA",
+        "image_path": "/assets/img/tiles/triangle_with_coa.png",
+        "edges": {
+          "N": "city",
+          "E": "field",
+          "S": "field",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 1
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "En",
+              "Es",
+              "Se",
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "triangle_road",
+        "name": "Triangle With Road",
+        "image_path": "/assets/img/tiles/triangle_with_road.png",
+        "edges": {
+          "N": "city",
+          "E": "road",
+          "S": "road",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "E",
+              "S"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "En",
+              "Sw"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Es",
+              "Se"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "triangle_road_coa",
+        "name": "Triangle With Road With COA",
+        "image_path": "/assets/img/tiles/triangle_with_road_with_coa.png",
+        "edges": {
+          "N": "city",
+          "E": "road",
+          "S": "road",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 1
+          },
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "E",
+              "S"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "En",
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Es",
+              "Se"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "city_cap",
+        "name": "City Cap",
+        "image_path": "/assets/img/tiles/city_cap.png",
+        "edges": {
+          "N": "city",
+          "E": "field",
+          "S": "field",
+          "W": "field"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Ne",
+              "En",
+              "Es",
+              "Se",
+              "Sw",
+              "Ws",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "left",
+        "name": "Left",
+        "image_path": "/assets/img/tiles/left.png",
+        "edges": {
+          "N": "city",
+          "E": "field",
+          "S": "road",
+          "W": "road"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "S",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Ne",
+              "En",
+              "Es",
+              "Se",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "right",
+        "name": "Right",
+        "image_path": "/assets/img/tiles/right.png",
+        "edges": {
+          "N": "city",
+          "E": "road",
+          "S": "road",
+          "W": "field"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "E",
+              "S"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "En",
+              "Sw",
+              "Ws",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Es",
+              "Se"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "city_cap_straight",
+        "name": "City Cap With Straight",
+        "image_path": "/assets/img/tiles/city_cap_with_straight.png",
+        "edges": {
+          "N": "city",
+          "E": "road",
+          "S": "field",
+          "W": "road"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "E",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "En",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Es",
+              "Se",
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "city_cap_crossroads",
+        "name": "City Cap With Crossroads",
+        "image_path": "/assets/img/tiles/city_cap_with_crossroads.png",
+        "edges": {
+          "N": "city",
+          "E": "road",
+          "S": "road",
+          "W": "road"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "E",
+              "S",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "En"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Es",
+              "Se"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_3",
+            "kind": "field",
+            "edges": [
+              "Wn",
+              "Ws",
+              "Sw"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "separator",
+        "name": "Separator",
+        "image_path": "/assets/img/tiles/separator.png",
+        "edges": {
+          "N": "city",
+          "E": "field",
+          "S": "field",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "city_2",
+            "kind": "city",
+            "edges": [
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Ne",
+              "En",
+              "Es",
+              "Se",
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "vertical_separator",
+        "name": "Vertical Separator",
+        "image_path": "/assets/img/tiles/vertical_separator.png",
+        "edges": {
+          "N": "city",
+          "E": "field",
+          "S": "city",
+          "W": "field"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "city_2",
+            "kind": "city",
+            "edges": [
+              "S"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "En",
+              "Es",
+              "Ws",
+              "Wn"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "connector",
+        "name": "Connector",
+        "image_path": "/assets/img/tiles/connector.png",
+        "edges": {
+          "N": "field",
+          "E": "city",
+          "S": "field",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "E"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "city_2",
+            "kind": "city",
+            "edges": [
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "Ne"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Se",
+              "Sw"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "connector_coa",
+        "name": "Connector With COA",
+        "image_path": "/assets/img/tiles/connector_with_coa.png",
+        "edges": {
+          "N": "field",
+          "E": "city",
+          "S": "field",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "E"
+            ],
+            "center": false,
+            "score_bonus": 1
+          },
+          {
+            "id": "city_2",
+            "kind": "city",
+            "edges": [
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Nw",
+              "Ne"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Se",
+              "Sw"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "triple_city",
+        "name": "Triple City",
+        "image_path": "/assets/img/tiles/triple_city.png",
+        "edges": {
+          "N": "city",
+          "E": "city",
+          "S": "field",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N",
+              "E",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Se",
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "triple_city_coa",
+        "name": "Triple City With COA",
+        "image_path": "/assets/img/tiles/triple_city_with_coa.png",
+        "edges": {
+          "N": "city",
+          "E": "city",
+          "S": "field",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N",
+              "E",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 1
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Se",
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "triple_city_road",
+        "name": "Triple City With Road",
+        "image_path": "/assets/img/tiles/triple_city_with_road.png",
+        "edges": {
+          "N": "city",
+          "E": "city",
+          "S": "road",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N",
+              "E",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "S"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Se"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "triple_city_road_coa",
+        "name": "Triple City With Road With COA",
+        "image_path": "/assets/img/tiles/triple_city_with_road_with_coa.png",
+        "edges": {
+          "N": "city",
+          "E": "city",
+          "S": "road",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N",
+              "E",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 1
+          },
+          {
+            "id": "road_1",
+            "kind": "road",
+            "edges": [
+              "S"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_1",
+            "kind": "field",
+            "edges": [
+              "Se"
+            ],
+            "center": false,
+            "score_bonus": 0
+          },
+          {
+            "id": "field_2",
+            "kind": "field",
+            "edges": [
+              "Sw",
+              "Ws"
+            ],
+            "center": false,
+            "score_bonus": 0
+          }
+        ]
+      },
+      {
+        "id": "quadruple_city_coa",
+        "name": "Quadruple City With COA",
+        "image_path": "/assets/img/tiles/quadruple_city_with_coa.png",
+        "edges": {
+          "N": "city",
+          "E": "city",
+          "S": "city",
+          "W": "city"
+        },
+        "features": [
+          {
+            "id": "city_1",
+            "kind": "city",
+            "edges": [
+              "N",
+              "E",
+              "S",
+              "W"
+            ],
+            "center": false,
+            "score_bonus": 1
+          }
+        ]
+      }
+    ]
+  },
+  "history": [
+    {
+      "index": 0,
+      "type": "game_finished",
+      "description": "Archive test game finished.",
+      "player_id": "p1",
+      "timestamp": "2026-03-24T01:48:24.563577+00:00",
+      "snapshot": {
+        "game_id": "archive-check",
+        "status": "finished",
+        "host_player_id": null,
+        "max_players": 5,
+        "min_players_to_start": 2,
+        "initial_meeples": 7,
+        "use_void_cards": false,
+        "use_creepassonne": false,
+        "players": [
+          {
+            "id": "p1",
+            "name": "Archivist",
+            "color": "red",
+            "is_bot": false,
+            "bot_policy": null,
+            "score": 10,
+            "meeples_available": 7
+          },
+          {
+            "id": "p2",
+            "name": "Reviewer",
+            "color": "blue",
+            "is_bot": false,
+            "bot_policy": null,
+            "score": 8,
+            "meeples_available": 7
+          }
+        ],
+        "board": [
+          {
+            "x": 0,
+            "y": 0,
+            "rotation": 0,
+            "tile_id": "city_cap_straight",
+            "tile": {
+              "id": "city_cap_straight",
+              "name": "City Cap With Straight",
+              "image_path": "/assets/img/tiles/city_cap_with_straight.png",
+              "edges": {
+                "N": "city",
+                "E": "road",
+                "S": "field",
+                "W": "road"
+              },
+              "features": [
+                {
+                  "id": "city_1",
+                  "kind": "city",
+                  "edges": [
+                    "N"
+                  ],
+                  "center": false,
+                  "score_bonus": 0
+                },
+                {
+                  "id": "road_1",
+                  "kind": "road",
+                  "edges": [
+                    "E",
+                    "W"
+                  ],
+                  "center": false,
+                  "score_bonus": 0
+                },
+                {
+                  "id": "field_1",
+                  "kind": "field",
+                  "edges": [
+                    "En",
+                    "Wn"
+                  ],
+                  "center": false,
+                  "score_bonus": 0
+                },
+                {
+                  "id": "field_2",
+                  "kind": "field",
+                  "edges": [
+                    "Es",
+                    "Se",
+                    "Sw",
+                    "Ws"
+                  ],
+                  "center": false,
+                  "score_bonus": 0
+                }
+              ]
+            },
+            "meeple": null
+          }
+        ],
+        "current_player_id": null,
+        "viewer_player_id": null,
+        "current_turn": null,
+        "remaining_tiles": 0,
+        "discarded_tiles": 0,
+        "winner_ids": [
+          "p1"
+        ],
+        "messages": [],
+        "viewport": {
+          "min_x": -2,
+          "max_x": 2,
+          "min_y": -2,
+          "max_y": 2
+        },
+        "catalog": [
+          {
+            "id": "monastery",
+            "name": "Monastery",
+            "image_path": "/assets/img/tiles/monastery.png",
+            "edges": {
+              "N": "field",
+              "E": "field",
+              "S": "field",
+              "W": "field"
+            },
+            "features": [
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "Ne",
+                  "En",
+                  "Es",
+                  "Se",
+                  "Sw",
+                  "Ws",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "monastery_1",
+                "kind": "monastery",
+                "edges": [],
+                "center": true,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "monastery_road",
+            "name": "Monastery With Road",
+            "image_path": "/assets/img/tiles/monastery_with_road.png",
+            "edges": {
+              "N": "field",
+              "E": "field",
+              "S": "road",
+              "W": "field"
+            },
+            "features": [
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "S"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "Ne",
+                  "En",
+                  "Es",
+                  "Se",
+                  "Sw",
+                  "Ws",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "monastery_1",
+                "kind": "monastery",
+                "edges": [],
+                "center": true,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "straight",
+            "name": "Straight",
+            "image_path": "/assets/img/tiles/straight.png",
+            "edges": {
+              "N": "road",
+              "E": "field",
+              "S": "road",
+              "W": "field"
+            },
+            "features": [
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "N",
+                  "S"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "Sw",
+                  "Ws",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Ne",
+                  "En",
+                  "Es",
+                  "Se"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "curve",
+            "name": "Curve",
+            "image_path": "/assets/img/tiles/curve.png",
+            "edges": {
+              "N": "field",
+              "E": "field",
+              "S": "road",
+              "W": "road"
+            },
+            "features": [
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "S",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "Ne",
+                  "En",
+                  "Es",
+                  "Se",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "triple_road",
+            "name": "Triple Road",
+            "image_path": "/assets/img/tiles/triple_road.png",
+            "edges": {
+              "N": "field",
+              "E": "road",
+              "S": "road",
+              "W": "road"
+            },
+            "features": [
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "E",
+                  "S",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "Ne",
+                  "En",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Es",
+                  "Se"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_3",
+                "kind": "field",
+                "edges": [
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "quadruple_road",
+            "name": "Quadruple Road",
+            "image_path": "/assets/img/tiles/quadruple_road.png",
+            "edges": {
+              "N": "road",
+              "E": "road",
+              "S": "road",
+              "W": "road"
+            },
+            "features": [
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "N",
+                  "E",
+                  "S",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Ne",
+                  "En"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_3",
+                "kind": "field",
+                "edges": [
+                  "Es",
+                  "Se"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_4",
+                "kind": "field",
+                "edges": [
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "triangle",
+            "name": "Triangle",
+            "image_path": "/assets/img/tiles/triangle.png",
+            "edges": {
+              "N": "city",
+              "E": "field",
+              "S": "field",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "En",
+                  "Es",
+                  "Se",
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "triangle_coa",
+            "name": "Triangle With COA",
+            "image_path": "/assets/img/tiles/triangle_with_coa.png",
+            "edges": {
+              "N": "city",
+              "E": "field",
+              "S": "field",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 1
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "En",
+                  "Es",
+                  "Se",
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "triangle_road",
+            "name": "Triangle With Road",
+            "image_path": "/assets/img/tiles/triangle_with_road.png",
+            "edges": {
+              "N": "city",
+              "E": "road",
+              "S": "road",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "E",
+                  "S"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "En",
+                  "Sw"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Es",
+                  "Se"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "triangle_road_coa",
+            "name": "Triangle With Road With COA",
+            "image_path": "/assets/img/tiles/triangle_with_road_with_coa.png",
+            "edges": {
+              "N": "city",
+              "E": "road",
+              "S": "road",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 1
+              },
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "E",
+                  "S"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "En",
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Es",
+                  "Se"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "city_cap",
+            "name": "City Cap",
+            "image_path": "/assets/img/tiles/city_cap.png",
+            "edges": {
+              "N": "city",
+              "E": "field",
+              "S": "field",
+              "W": "field"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Ne",
+                  "En",
+                  "Es",
+                  "Se",
+                  "Sw",
+                  "Ws",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "left",
+            "name": "Left",
+            "image_path": "/assets/img/tiles/left.png",
+            "edges": {
+              "N": "city",
+              "E": "field",
+              "S": "road",
+              "W": "road"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "S",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Ne",
+                  "En",
+                  "Es",
+                  "Se",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "right",
+            "name": "Right",
+            "image_path": "/assets/img/tiles/right.png",
+            "edges": {
+              "N": "city",
+              "E": "road",
+              "S": "road",
+              "W": "field"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "E",
+                  "S"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "En",
+                  "Sw",
+                  "Ws",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Es",
+                  "Se"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "city_cap_straight",
+            "name": "City Cap With Straight",
+            "image_path": "/assets/img/tiles/city_cap_with_straight.png",
+            "edges": {
+              "N": "city",
+              "E": "road",
+              "S": "field",
+              "W": "road"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "E",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "En",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Es",
+                  "Se",
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "city_cap_crossroads",
+            "name": "City Cap With Crossroads",
+            "image_path": "/assets/img/tiles/city_cap_with_crossroads.png",
+            "edges": {
+              "N": "city",
+              "E": "road",
+              "S": "road",
+              "W": "road"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "E",
+                  "S",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "En"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Es",
+                  "Se"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_3",
+                "kind": "field",
+                "edges": [
+                  "Wn",
+                  "Ws",
+                  "Sw"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "separator",
+            "name": "Separator",
+            "image_path": "/assets/img/tiles/separator.png",
+            "edges": {
+              "N": "city",
+              "E": "field",
+              "S": "field",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "city_2",
+                "kind": "city",
+                "edges": [
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Ne",
+                  "En",
+                  "Es",
+                  "Se",
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "vertical_separator",
+            "name": "Vertical Separator",
+            "image_path": "/assets/img/tiles/vertical_separator.png",
+            "edges": {
+              "N": "city",
+              "E": "field",
+              "S": "city",
+              "W": "field"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "city_2",
+                "kind": "city",
+                "edges": [
+                  "S"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "En",
+                  "Es",
+                  "Ws",
+                  "Wn"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "connector",
+            "name": "Connector",
+            "image_path": "/assets/img/tiles/connector.png",
+            "edges": {
+              "N": "field",
+              "E": "city",
+              "S": "field",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "E"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "city_2",
+                "kind": "city",
+                "edges": [
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "Ne"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Se",
+                  "Sw"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "connector_coa",
+            "name": "Connector With COA",
+            "image_path": "/assets/img/tiles/connector_with_coa.png",
+            "edges": {
+              "N": "field",
+              "E": "city",
+              "S": "field",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "E"
+                ],
+                "center": false,
+                "score_bonus": 1
+              },
+              {
+                "id": "city_2",
+                "kind": "city",
+                "edges": [
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Nw",
+                  "Ne"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Se",
+                  "Sw"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "triple_city",
+            "name": "Triple City",
+            "image_path": "/assets/img/tiles/triple_city.png",
+            "edges": {
+              "N": "city",
+              "E": "city",
+              "S": "field",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N",
+                  "E",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Se",
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "triple_city_coa",
+            "name": "Triple City With COA",
+            "image_path": "/assets/img/tiles/triple_city_with_coa.png",
+            "edges": {
+              "N": "city",
+              "E": "city",
+              "S": "field",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N",
+                  "E",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 1
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Se",
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "triple_city_road",
+            "name": "Triple City With Road",
+            "image_path": "/assets/img/tiles/triple_city_with_road.png",
+            "edges": {
+              "N": "city",
+              "E": "city",
+              "S": "road",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N",
+                  "E",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "S"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Se"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "triple_city_road_coa",
+            "name": "Triple City With Road With COA",
+            "image_path": "/assets/img/tiles/triple_city_with_road_with_coa.png",
+            "edges": {
+              "N": "city",
+              "E": "city",
+              "S": "road",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N",
+                  "E",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 1
+              },
+              {
+                "id": "road_1",
+                "kind": "road",
+                "edges": [
+                  "S"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_1",
+                "kind": "field",
+                "edges": [
+                  "Se"
+                ],
+                "center": false,
+                "score_bonus": 0
+              },
+              {
+                "id": "field_2",
+                "kind": "field",
+                "edges": [
+                  "Sw",
+                  "Ws"
+                ],
+                "center": false,
+                "score_bonus": 0
+              }
+            ]
+          },
+          {
+            "id": "quadruple_city_coa",
+            "name": "Quadruple City With COA",
+            "image_path": "/assets/img/tiles/quadruple_city_with_coa.png",
+            "edges": {
+              "N": "city",
+              "E": "city",
+              "S": "city",
+              "W": "city"
+            },
+            "features": [
+              {
+                "id": "city_1",
+                "kind": "city",
+                "edges": [
+                  "N",
+                  "E",
+                  "S",
+                  "W"
+                ],
+                "center": false,
+                "score_bonus": 1
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -341,12 +341,29 @@ FEATURE_OVERRIDES: Dict[str, Tuple[FeatureDefinition, ...]] = {
         FeatureDefinition(id="field_3", kind="field", edges=("Es", "Se")),
         FeatureDefinition(id="field_4", kind="field", edges=("Sw", "Ws")),
     ),
+    "separator": (
+        FeatureDefinition(id="city_1", kind="city", edges=("N",)),
+        FeatureDefinition(id="city_2", kind="city", edges=("W",)),
+        FeatureDefinition(id="field_1", kind="field", edges=("Ne", "En", "Es", "Se", "Sw", "Ws"), adjacent_cities=("city_1", "city_2")),
+    ),
     "city_cap_crossroads": (
         FeatureDefinition(id="city_1", kind="city", edges=("N",)),
         FeatureDefinition(id="road_1", kind="road", edges=("E", "S", "W")),
         FeatureDefinition(id="field_1", kind="field", edges=("En",), adjacent_cities=("city_1",)),
         FeatureDefinition(id="field_2", kind="field", edges=("Es", "Se")),
         FeatureDefinition(id="field_3", kind="field", edges=("Wn", "Ws", "Sw"), adjacent_cities=("city_1",)),
+    ),
+    "connector": (
+        FeatureDefinition(id="city_1", kind="city", edges=("E",)),
+        FeatureDefinition(id="city_2", kind="city", edges=("W",)),
+        FeatureDefinition(id="field_1", kind="field", edges=("Nw", "Ne"), adjacent_cities=("city_1", "city_2")),
+        FeatureDefinition(id="field_2", kind="field", edges=("Se", "Sw"), adjacent_cities=("city_1", "city_2")),
+    ),
+    "connector_coa": (
+        FeatureDefinition(id="city_1", kind="city", edges=("E",), score_bonus=1),
+        FeatureDefinition(id="city_2", kind="city", edges=("W",)),
+        FeatureDefinition(id="field_1", kind="field", edges=("Nw", "Ne"), adjacent_cities=("city_1", "city_2")),
+        FeatureDefinition(id="field_2", kind="field", edges=("Se", "Sw"), adjacent_cities=("city_1", "city_2")),
     ),
 }
 

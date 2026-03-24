@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from backend.main import app
 from backend.engine.game_engine import InvalidMoveError
 from backend.engine.models import GameState, MeeplePlacement, PlacedTile, PlayerState
-from backend.engine.tile_library import START_TILE_ID, VOID_TILE_ID
+from backend.engine.tile_library import START_TILE_ID, TILE_LIBRARY, VOID_TILE_ID
 from backend.storage.game_store import game_store
 
 
@@ -15,6 +15,8 @@ def main() -> None:
     bot_slugs = {bot["slug"] for bot in bot_catalog.json()["bots"]}
     assert {"easy", "medium", "hard"}.issubset(bot_slugs)
     assert "template" not in bot_slugs
+    separator_cities = [feature for feature in TILE_LIBRARY["separator"].features if feature.kind == "city"]
+    assert len(separator_cities) == 2, "Separator tile should expose two separate city features."
 
     custom_meeples_create = client.post("/games/create", json={"initial_meeples": 9})
     custom_meeples_create.raise_for_status()
