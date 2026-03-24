@@ -23,6 +23,7 @@ class GameEngine:
         self,
         seed: Optional[int] = None,
         use_void_cards: bool = False,
+        use_creepassonne: bool = False,
         initial_meeples: int = 7,
     ) -> GameState:
         game_id = uuid4().hex[:8]
@@ -42,11 +43,14 @@ class GameEngine:
             max_players=MAX_PLAYERS,
             initial_meeples=normalized_meeples,
             use_void_cards=use_void_cards,
+            use_creepassonne=use_creepassonne,
         )
         game.board[(0, 0)] = PlacedTile(tile_id=START_TILE_ID, rotation=0, x=0, y=0)
         game.message_log.append("Game created. Share the game ID with other players, then start when ready.")
         if use_void_cards:
             game.message_log.append("Void cards variant enabled.")
+        if use_creepassonne:
+            game.message_log.append("Creepassonne variant enabled.")
         return game
 
     def add_player(self, game: GameState, name: Optional[str] = None, is_bot: bool = False, bot_policy: Optional[str] = None) -> PlayerState:
@@ -85,7 +89,9 @@ class GameEngine:
         game.status = "active"
         game.message_log.append(
             f"{host.name} started the game with {len(game.players)} players, "
-            f"{game.initial_meeples} meeples each{', void cards enabled' if game.use_void_cards else ''}."
+            f"{game.initial_meeples} meeples each"
+            f"{', void cards enabled' if game.use_void_cards else ''}"
+            f"{', Creepassonne enabled' if game.use_creepassonne else ''}."
         )
         self._prepare_turn(game)
 
@@ -123,6 +129,8 @@ class GameEngine:
         if feature_id is not None:
             if player.meeples_available <= 0:
                 raise InvalidMoveError("This player has no meeples available.")
+            if not self._is_legal_meeple_choice(game, player.id, placed_tile, feature_id):
+                raise InvalidMoveError("That meeple placement is not legal for the selected tile placement.")
             feature = next(feature for feature in rotated_features(tile_def, rotation) if feature.id == feature_id)
             placed_tile.meeple = MeeplePlacement(player_id=player.id, feature_id=feature_id, kind=feature.kind)
             player.meeples_available -= 1
@@ -157,6 +165,7 @@ class GameEngine:
             "min_players_to_start": MIN_PLAYERS,
             "initial_meeples": game.initial_meeples,
             "use_void_cards": game.use_void_cards,
+            "use_creepassonne": game.use_creepassonne,
             "players": [
                 {
                     "id": player.id,
@@ -330,9 +339,9 @@ class GameEngine:
         tile = TILE_LIBRARY[tile_id]
         options: List[dict] = [{"feature_id": None, "kind": None, "label": "No meeple"}]
         placed = PlacedTile(tile_id=tile_id, rotation=rotation, x=x, y=y)
+        current_player = self._current_player(game)
         for feature in rotated_features(tile, rotation):
-            component = self._trace_feature_component(game, placed, feature.id)
-            if any(item["meeple"] is not None for item in component["members"]):
+            if not self._is_legal_meeple_choice(game, current_player.id, placed, feature.id):
                 continue
             options.append(
                 {
@@ -342,6 +351,30 @@ class GameEngine:
                 }
             )
         return options
+
+    def _can_place_meeple_under_creepassonne(self, game: GameState, player_id: str, x: int, y: int) -> bool:
+        if not game.use_creepassonne:
+            return True
+        existing_positions = [
+            (tile.x, tile.y)
+            for tile in game.board.values()
+            if tile.meeple is not None and tile.meeple.player_id == player_id
+        ]
+        if not existing_positions:
+            return True
+        return any(abs(mx - x) + abs(my - y) <= 2 for mx, my in existing_positions)
+
+    def _is_legal_meeple_choice(self, game: GameState, player_id: str, placed_tile: PlacedTile, feature_id: str) -> bool:
+        if not self._can_place_meeple_under_creepassonne(game, player_id, placed_tile.x, placed_tile.y):
+            return False
+        feature = next(
+            (candidate for candidate in rotated_features(TILE_LIBRARY[placed_tile.tile_id], placed_tile.rotation) if candidate.id == feature_id),
+            None,
+        )
+        if feature is None:
+            return False
+        component = self._trace_feature_component(game, placed_tile, feature.id)
+        return not any(item["meeple"] is not None for item in component["members"])
 
     def _score_after_placement(self, game: GameState, placed_tile: PlacedTile) -> None:
         seen: Set[Tuple[Tuple[int, int], str]] = set()

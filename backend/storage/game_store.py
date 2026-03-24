@@ -28,12 +28,14 @@ class GameStore:
         *,
         pending_bot_counts: Optional[Dict[str, int]] = None,
         use_void_cards: bool = False,
+        use_creepassonne: bool = False,
         initial_meeples: int = 7,
     ) -> GameState:
         with self._lock:
             game = self.engine.create_game(
                 seed=seed,
                 use_void_cards=use_void_cards,
+                use_creepassonne=use_creepassonne,
                 initial_meeples=initial_meeples,
             )
             requested = pending_bot_counts or {}
@@ -97,12 +99,14 @@ class GameStore:
         *,
         pending_bot_counts: Optional[Dict[str, int]] = None,
         use_void_cards: bool = False,
+        use_creepassonne: bool = False,
         initial_meeples: int = 7,
     ) -> GameState:
         with self._lock:
             game = self.engine.create_game(
                 seed=seed,
                 use_void_cards=use_void_cards,
+                use_creepassonne=use_creepassonne,
                 initial_meeples=initial_meeples,
             )
             requested = pending_bot_counts or {}
@@ -250,6 +254,7 @@ class GameStore:
                 "final_scores": {player.name: player.score for player in game.players},
                 "turn_count": len([entry for entry in game.history if entry["type"] == "turn_played"]),
                 "use_void_cards": game.use_void_cards,
+                "use_creepassonne": game.use_creepassonne,
                 "initial_meeples": game.initial_meeples,
             },
             "final_state": self.engine.serialize(game),

@@ -45,6 +45,7 @@ class GameState:
     max_players: int = 5
     initial_meeples: int = 7
     use_void_cards: bool = False
+    use_creepassonne: bool = False
     pending_bot_counts: Dict[str, int] = field(default_factory=dict)
     players: List[PlayerState] = field(default_factory=list)
     board: Dict[Tuple[int, int], PlacedTile] = field(default_factory=dict)

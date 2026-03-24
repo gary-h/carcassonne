@@ -21,6 +21,7 @@ const elements = {
   playerName: document.getElementById("player-name"),
   initialMeeples: document.getElementById("initial-meeples"),
   useVoidCards: document.getElementById("use-void-cards"),
+  useCreepassonne: document.getElementById("use-creepassonne"),
   insertBot: document.getElementById("insert-bot"),
   botConfigList: document.getElementById("bot-config-list"),
   createGame: document.getElementById("create-game"),
@@ -133,6 +134,7 @@ async function createGame() {
       bot_only: botOnly,
       initial_meeples: Number(elements.initialMeeples.value || 7),
       use_void_cards: elements.useVoidCards.checked,
+      use_creepassonne: elements.useCreepassonne.checked,
     }),
   });
   state.gameId = response.game_id;
@@ -445,14 +447,14 @@ function rotate(delta) {
 
 function describeStatus(game) {
   if (game.status === "waiting") {
-    return `Lobby ${game.game_id}: ${game.players.length}/${game.max_players} players joined. ${game.initial_meeples} meeples each.${game.use_void_cards ? " Void cards on." : ""}`;
+    return `Lobby ${game.game_id}: ${game.players.length}/${game.max_players} players joined. ${game.initial_meeples} meeples each.${game.use_void_cards ? " Void cards on." : ""}${game.use_creepassonne ? " Creepassonne on." : ""}`;
   }
   if (game.status === "finished") {
     const names = game.players.filter((player) => game.winner_ids.includes(player.id)).map((player) => player.name);
     return `Game over. Winner${names.length > 1 ? "s" : ""}: ${names.join(", ") || "n/a"}.`;
   }
   const current = game.players.find((player) => player.id === game.current_player_id);
-  return current ? `${current.name}${current.is_bot ? " (bot)" : ""} to play. ${game.initial_meeples} meeples each.${game.use_void_cards ? " Void cards on." : ""}` : "Game in progress.";
+  return current ? `${current.name}${current.is_bot ? " (bot)" : ""} to play. ${game.initial_meeples} meeples each.${game.use_void_cards ? " Void cards on." : ""}${game.use_creepassonne ? " Creepassonne on." : ""}` : "Game in progress.";
 }
 
 function formatBotPolicy(policy) {

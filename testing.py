@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 
 from backend.main import app
+from backend.engine.game_engine import InvalidMoveError
 from backend.engine.models import GameState, MeeplePlacement, PlacedTile, PlayerState
 from backend.engine.tile_library import START_TILE_ID, VOID_TILE_ID
 from backend.storage.game_store import game_store
@@ -126,6 +127,82 @@ def main() -> None:
     assert (3, 0) in blocked_positions
     assert (2, 1) in blocked_positions
     assert (1, 0) not in game_store.engine._candidate_positions(blocked_game), "No tile may be placed adjacent to a void card."
+
+    creep_game = GameState(game_id="creep-check", use_creepassonne=True)
+    creep_game.players.extend(
+        [
+            PlayerState(id="creep", name="Creep", color="red"),
+            PlayerState(id="other", name="Other", color="blue"),
+        ]
+    )
+    first_allowed = game_store.engine._can_place_meeple_under_creepassonne(creep_game, "creep", 5, 5)
+    assert first_allowed is True, "The first meeple in Creepassonne should be placeable anywhere."
+    creep_game.board[(0, 0)] = PlacedTile(
+        tile_id="city_cap",
+        rotation=0,
+        x=0,
+        y=0,
+        meeple=MeeplePlacement(player_id="creep", feature_id=base_field_id, kind="field"),
+    )
+    assert game_store.engine._can_place_meeple_under_creepassonne(creep_game, "creep", 2, 0) is True
+    assert game_store.engine._can_place_meeple_under_creepassonne(creep_game, "creep", 1, 1) is True
+    assert game_store.engine._can_place_meeple_under_creepassonne(creep_game, "creep", 2, 2) is False
+    assert game_store.engine._can_place_meeple_under_creepassonne(creep_game, "creep", 3, 0) is False
+
+    meeple_block_game = game_store.engine.create_game(seed=3)
+    first = game_store.engine.add_player(meeple_block_game, "First")
+    second = game_store.engine.add_player(meeple_block_game, "Second")
+    game_store.engine.start_game(meeple_block_game, meeple_block_game.host_player_id)
+    opening_move = next(
+        (
+            move,
+            option["feature_id"],
+        )
+        for move in meeple_block_game.current_turn.legal_moves
+        for option in move["meeple_options"]
+        if option["feature_id"] is not None
+    )
+    game_store.engine.submit_turn(
+        meeple_block_game,
+        player_id=first.id,
+        x=opening_move[0]["x"],
+        y=opening_move[0]["y"],
+        rotation=opening_move[0]["rotation"],
+        feature_id=opening_move[1],
+    )
+    blocked_feature_id = None
+    blocked_move = None
+    if meeple_block_game.current_turn is not None:
+        for move in meeple_block_game.current_turn.legal_moves:
+            for option in move["meeple_options"]:
+                if option["feature_id"] is None:
+                    continue
+                placed = PlacedTile(
+                    tile_id=meeple_block_game.current_turn.tile_id,
+                    rotation=move["rotation"],
+                    x=move["x"],
+                    y=move["y"],
+                )
+                component = game_store.engine._trace_feature_component(meeple_block_game, placed, option["feature_id"])
+                if any(item["meeple"] is not None for item in component["members"]):
+                    blocked_move = move
+                    blocked_feature_id = option["feature_id"]
+                    break
+            if blocked_feature_id is not None:
+                break
+    if blocked_feature_id is not None:
+        try:
+            game_store.engine.submit_turn(
+                meeple_block_game,
+                player_id=second.id,
+                x=blocked_move["x"],
+                y=blocked_move["y"],
+                rotation=blocked_move["rotation"],
+                feature_id=blocked_feature_id,
+            )
+            raise AssertionError("Connected-feature meeple placement should be rejected on submit.")
+        except InvalidMoveError:
+            pass
 
     # Bot path: creating a mixed game with bots should allow humans to join and bots to respond.
     bot_create = client.post("/games/create", json={"bot_counts": {"easy": 1, "medium": 1, "hard": 1}})
